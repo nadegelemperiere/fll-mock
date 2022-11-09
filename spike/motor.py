@@ -24,7 +24,7 @@ motor_stop_actions = [
     'brake',
 ]
 
-# pylint: disable=R0902
+# pylint: disable=R0902, R0904
 class Motor(Mock) :
     """ Motor mocking function """
 
@@ -100,8 +100,7 @@ class Motor(Mock) :
             raise ValueError('degrees is not in the range 0-359')
 
 
-        if speed < - self.s_max_speed : speed = - self.s_max_speed
-        if speed > self.s_max_speed :   speed = self.s_max_speed
+        speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
     def run_to_degrees_counted(self, degrees, speed=None):
         """ Runs the motor until the number of degrees counted
@@ -118,8 +117,7 @@ class Motor(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not an integer')
 
-        if speed < - self.s_max_speed : speed = - self.s_max_speed
-        if speed > self.s_max_speed :   speed = self.s_max_speed
+        speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
     def run_for_degrees(self, degrees, speed=None):
         """ Runs the motor for a specified number of degrees.
@@ -135,8 +133,7 @@ class Motor(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not an integer')
 
-        if speed < - self.s_max_speed : speed = - self.s_max_speed
-        if speed > self.s_max_speed :   speed = self.s_max_speed
+        speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
     def run_for_rotations(self, rotations, speed=None):
         """ Runs the motor for a specified number of rotations.
@@ -152,8 +149,7 @@ class Motor(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not an integer')
 
-        if speed < - self.s_max_speed : speed = - self.s_max_speed
-        if speed > self.s_max_speed :   speed = self.s_max_speed
+        speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
     def run_for_seconds(self, seconds, speed=None):
         """ Runs the motor for a specified number of seconds.
@@ -169,8 +165,7 @@ class Motor(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not an integer')
 
-        if speed < - self.s_max_speed : speed = - self.s_max_speed
-        if speed > self.s_max_speed :   speed = self.s_max_speed
+        speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
     def start(self, speed=None) :
         """ Activate motor
@@ -183,8 +178,7 @@ class Motor(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not an integer')
 
-        if speed < - self.s_max_speed : speed = - self.s_max_speed
-        if speed > self.s_max_speed :   speed = self.s_max_speed
+        speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
     def stop(self) :
         """ Stop base """
@@ -198,8 +192,7 @@ class Motor(Mock) :
         if not isinstance(power, int) :
             raise TypeError('power is not an integer')
 
-        if power < - self.s_max_power : power = - self.s_max_power
-        if power > self.s_max_power :   power = self.s_max_power
+        power = min(max(power,- self.s_max_power),self.s_max_power)
 
     def get_speed(self) :
         """ Return current speed
@@ -299,7 +292,6 @@ class Motor(Mock) :
 
         self.m_stop_action = action
 # pylint: enable=R0801
-# pylint: enable=R0902
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
@@ -329,4 +321,4 @@ class Motor(Mock) :
         self.m_position         = (self.m_degrees) % 360
 
 
-# pylint: enable=R0902
+# pylint: enable=R0902, R0904

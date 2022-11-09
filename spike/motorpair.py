@@ -62,8 +62,8 @@ class MotorPair(Mock) :
 
         self.m_default_speed = 100
         self.m_stop_action   = 'brake'
-        self.m_left_motor    = self.m_shared_robot.m_components['left_motor']
-        self.m_right_motor   = self.m_shared_robot.m_components['right_motor']
+        self.m_left_motor    = self.m_shared_robot.m_components[left_motor]
+        self.m_right_motor   = self.m_shared_robot.m_components[right_motor]
         self.s_default_columns  = {
             'left degrees':'left degrees',
             'right degrees':'right degrees',

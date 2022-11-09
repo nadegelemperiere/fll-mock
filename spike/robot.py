@@ -41,6 +41,9 @@ class Robot(Mock) :
             'y':'y',
             'z':'z',
         }
+        if len(self.m_configuration) == 0 :
+            super().__init__()
+
 
     def load_configuration(self, configuration) :
         """ Loading robot static configuration
@@ -93,12 +96,12 @@ class Robot(Mock) :
 
         super().step()
 
-    def initialize(self, mock) :
+    def initialize(self, data) :
         """ Loading a mock with scenario simulated data
         ---
-        mock (obj)  : Mock object to initialize
+        data (obj)  : Mock object to initialize
         """
-        mock.initialize(self.m_data)
+        data.initialize(self.m_data)
 
     def register_component(self, port, component) :
         """ Return type of component hosted by the port
