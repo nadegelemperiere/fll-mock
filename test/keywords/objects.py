@@ -20,19 +20,14 @@ from robot.api.deco import keyword
 ROBOT = False
 
 # Package includes
-from spike.hub              import PrimeHub
+from spike                  import Timer, PrimeHub, ColorSensor, DistanceSensor, ForceSensor, Motor, MotorPair, wait_for_seconds, wait_until
 from spike.button           import Button
-from spike.robot            import Robot
-from spike.colorsensor      import ColorSensor
-from spike.distancesensor   import DistanceSensor
-from spike.forcesensor      import ForceSensor
+from spike                  import Robot
 from spike.lightmatrix      import LightMatrix
 from spike.motionsensor     import MotionSensor
-from spike.motor            import Motor
-from spike.motorpair        import MotorPair
 from spike.speaker          import Speaker
 from spike.statuslight      import StatusLight
-from spike.timer            import Timer, TimerSingleton, wait_for_seconds, wait_until
+from spike.timer            import TimerSingleton
 
 @keyword('Create Scenario')
 def create_scenario(configuration) :
