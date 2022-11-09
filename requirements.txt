@@ -1,0 +1,2 @@
+openpyxl==3.0.9
+webcolors==1.3
