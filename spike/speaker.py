@@ -44,6 +44,11 @@ class Speaker(Mock) :
         self.s_default_columns = {
             'time' : 'time',
         }
+        self.m_commands['time']     = []
+        self.m_commands['command']  = []
+        self.m_commands['note']     = []
+        self.m_commands['seconds']  = []
+        self.m_commands['volume']   = []
 
 # pylint: enable=W0102
 
@@ -61,6 +66,10 @@ class Speaker(Mock) :
 
         if note < self.s_min_note or note > self.s_max_note :
             raise ValueError('note is not within the allowed range of 44-123')
+
+        self.m_commands['command'][-1]  = 'beep'
+        self.m_commands['note'][-1]     = note
+        self.m_commands['seconds'][-1]  = seconds
 
         self.m_is_beeping = True
         self.m_note       = note
@@ -82,6 +91,9 @@ class Speaker(Mock) :
         if note < 44 or note > 123 :
             raise ValueError('note is not within the allowed range of 44-123')
 
+        self.m_commands['command'][-1]  = 'start_beep'
+        self.m_commands['note'][-1]     = note
+
         self.m_is_beeping = True
         self.m_note       = note
 
@@ -89,6 +101,8 @@ class Speaker(Mock) :
         """ Beep stopping function """
         self.m_is_beeping = False
         self.m_note       = 0
+
+        self.m_commands['command'][-1] = 'stop'
 
     def get_volume(self) :
         """ Volume return function
@@ -109,12 +123,22 @@ class Speaker(Mock) :
         self.m_volume = volume
         self.m_volume = min(max(0,self.m_volume),self.s_max_volume)
 
+        self.m_commands['command'][-1] = 'set_volume'
+        self.m_commands['volume'][-1] = volume
+
 # ----------------- SIMULATION FUNCTIONS -----------------
 
     def step(self) :
         """ Step to the next simulation step """
 
         self.m_time         = self.m_scenario['time'][self.m_current_step]
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['command'].append(None)
+        self.m_commands['note'].append(None)
+        self.m_commands['seconds'].append(None)
+        self.m_commands['volume'].append(None)
+
         super().step()
 
     def check_columns(self, columns) :

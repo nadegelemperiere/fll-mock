@@ -67,7 +67,21 @@ class MotorPair(Mock) :
         self.s_default_columns  = {
             'left degrees':'left degrees',
             'right degrees':'right degrees',
+            'time' : 'time',
         }
+        self.m_commands['time']         = []
+        self.m_commands['command']      = []
+        self.m_commands['speed']        = []
+        self.m_commands['left_speed']   = []
+        self.m_commands['right_speed']  = []
+        self.m_commands['power']        = []
+        self.m_commands['left_power']   = []
+        self.m_commands['right_power']  = []
+        self.m_commands['amount']       = []
+        self.m_commands['unit']         = []
+        self.m_commands['steering']     = []
+        self.m_commands['rotations']    = []
+        self.m_commands['action']       = []
 
     def move(self, amount, unit='cm', steering=0, speed=None) :
         """ Activate both motors to move from a given distance
@@ -95,6 +109,14 @@ class MotorPair(Mock) :
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
         steering = min(max(steering,- self.s_max_steering),self.s_max_steering)
 
+        self.m_commands['command'][-1]  = 'move'
+        self.m_commands['amount'][-1]   = amount
+        self.m_commands['unit'][-1]     = unit
+        self.m_commands['steering'][-1] = steering
+        self.m_commands['speed'][-1]    = speed
+
+        self.step()
+
     def start(self, steering=0, speed=None) :
         """ Activate both motors
         ---
@@ -112,8 +134,16 @@ class MotorPair(Mock) :
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
         steering = min(max(steering,- self.s_max_steering),self.s_max_steering)
 
+        self.m_commands['command'][-1]  = 'start'
+        self.m_commands['steering'][-1] = steering
+        self.m_commands['speed'][-1]    = speed
+
+        self.step()
+
     def stop(self) :
         """ Stop base """
+
+        self.m_commands['command'][-1]  = 'stop'
 
     def move_tank(self, amount, unit='cm', left_speed=None, right_speed=None) :
         """ Activate both motors to move from a given distance
@@ -142,6 +172,11 @@ class MotorPair(Mock) :
         left_speed = min(max(left_speed,- self.s_max_speed),self.s_max_speed)
         right_speed = min(max(right_speed,- self.s_max_speed),self.s_max_speed)
 
+        self.m_commands['command'][-1]      = 'start'
+        self.m_commands['amount'][-1]       = amount
+        self.m_commands['left_speed'][-1]   = left_speed
+        self.m_commands['right_speed'][-1]  = right_speed
+
         self.step()
 
     def start_tank(self, left_speed, right_speed) :
@@ -158,6 +193,10 @@ class MotorPair(Mock) :
 
         left_speed = min(max(left_speed,- self.s_max_speed),self.s_max_speed)
         right_speed = min(max(right_speed,- self.s_max_speed),self.s_max_speed)
+
+        self.m_commands['command'][-1]      = 'start_tank'
+        self.m_commands['left_speed'][-1]   = left_speed
+        self.m_commands['right_speed'][-1]  = right_speed
 
         self.step()
 
@@ -176,6 +215,10 @@ class MotorPair(Mock) :
         power = min(max(power,- self.s_max_power),self.s_max_power)
         steering = min(max(steering,- self.s_max_steering),self.s_max_steering)
 
+        self.m_commands['command'][-1]  = 'start_at_power'
+        self.m_commands['power'][-1]    = power
+        self.m_commands['steering'][-1] = steering
+
         self.step()
 
     def start_tank_at_power(self, left_power, right_power) :
@@ -192,6 +235,10 @@ class MotorPair(Mock) :
 
         left_power = min(max(left_power,- self.s_max_power),self.s_max_power)
         right_power = min(max(right_power,- self.s_max_power),self.s_max_power)
+
+        self.m_commands['command'][-1]      = 'start_tank_at_power'
+        self.m_commands['left_power'][-1]   = left_power
+        self.m_commands['right_power'][-1]  = right_power
 
         self.step()
 
@@ -217,6 +264,10 @@ class MotorPair(Mock) :
         if unit not in ['cm', 'inches'] :
             raise ValueError('unit is not one of the allowed values')
 
+        self.m_commands['command'][-1]  = 'set_motor_rotation'
+        self.m_commands['amount'][-1]   = amount
+        self.m_commands['unit'][-1]     = unit
+
     def set_default_speed(self, speed) :
         """ Set the motorpair default speed
         ---
@@ -228,7 +279,11 @@ class MotorPair(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not a number')
 
+        self.m_commands['command'][-1]  = 'set_default_speed'
+        self.m_commands['speed'][-1]    = speed
+
         self.m_default_speed = speed
+
 
     def set_stop_action(self, action) :
         """ Sets the action to be performed on stop
@@ -240,6 +295,9 @@ class MotorPair(Mock) :
 
         if action not in motor_stop_actions :
             raise ValueError('action is not one of the allowed values')
+
+        self.m_commands['command'][-1]  = 'set_stop_action'
+        self.m_commands['action'][-1]   = action
 
         self.m_stop_action = action
 
@@ -253,6 +311,20 @@ class MotorPair(Mock) :
 
         self.m_left_motor.set_degrees(left_degrees)
         self.m_right_motor.set_degrees(right_degrees)
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['command'].append(None)
+        self.m_commands['speed'].append(None)
+        self.m_commands['left_speed'].append(None)
+        self.m_commands['right_speed'].append(None)
+        self.m_commands['power'].append(None)
+        self.m_commands['left_power'].append(None)
+        self.m_commands['right_power'].append(None)
+        self.m_commands['amount'].append(None)
+        self.m_commands['unit'].append(None)
+        self.m_commands['steering'].append(None)
+        self.m_commands['rotations'].append(None)
+        self.m_commands['action'].append(None)
 
         super().step()
 

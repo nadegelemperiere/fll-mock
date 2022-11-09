@@ -73,7 +73,13 @@ class ColorSensor(Mock) :
             'blue':'blue',
             'reflected':'reflected',
             'ambiant':'ambiant',
+            'time' : 'time',
         }
+        self.m_commands['time']     = []
+        self.m_commands['command']  = []
+        self.m_commands['light1']   = []
+        self.m_commands['light2']   = []
+        self.m_commands['light3']   = []
 
         self.m_shared_robot.register_component(port, self)
 
@@ -177,6 +183,11 @@ class ColorSensor(Mock) :
         self.m_light2 = max(0,min(abs(brightness),100))
         self.m_light3 = max(0,min(abs(brightness),100))
 
+        self.m_commands['command'][-1] = 'light_up_all'
+        self.m_commands['light1'][-1] = self.m_light1
+        self.m_commands['light2'][-1] = self.m_light2
+        self.m_commands['light3'][-1] = self.m_light3
+
     def light_up(self, light_1, light_2, light_3) :
         """ Light all color sensor LEDs
         ---
@@ -198,6 +209,11 @@ class ColorSensor(Mock) :
         self.m_light2 = max(0,min(abs(light_2),100))
         self.m_light3 = max(0,min(abs(light_3),100))
 
+        self.m_commands['command'][-1] = 'light_up'
+        self.m_commands['light1'][-1] = self.m_light1
+        self.m_commands['light2'][-1] = self.m_light2
+        self.m_commands['light3'][-1] = self.m_light3
+
 # ----------------- SIMULATION FUNCTIONS -----------------
 
     def step(self) :
@@ -216,6 +232,12 @@ class ColorSensor(Mock) :
             int(self.m_blue * 255 / 1024) \
         ))
         self.m_color = css3_to_spike_colormap[css3_name]
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['command'].append(None)
+        self.m_commands['light1'].append(None)
+        self.m_commands['light2'].append(None)
+        self.m_commands['light3'].append(None)
 
         super().step()
 

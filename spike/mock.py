@@ -12,6 +12,7 @@ class Mock() :
     """ Generic mock class """
 
     m_scenario          = {}
+    m_commands          = {}
     m_current_step      = -1
     m_columns           = {}
 
@@ -74,5 +75,12 @@ class Mock() :
         ---
         columns  (dict)   : The excel simulation data column name
         """
+
+    def get_commands(self) :
+        """ Commands received by mock
+        ---
+        returns  (dict)   : A dict of list of command values
+        """
+
 
 # pylint: enable=R0902

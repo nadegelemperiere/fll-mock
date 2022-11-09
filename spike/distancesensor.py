@@ -54,9 +54,17 @@ class DistanceSensor(Mock) :
         self.m_distance      = 0
         self.s_default_columns  = {
             'distance':'distance',
+            'time' : 'time',
         }
+        self.m_commands['time']         = []
+        self.m_commands['command']      = []
+        self.m_commands['right_top']    = []
+        self.m_commands['left_top']     = []
+        self.m_commands['right_bottom'] = []
+        self.m_commands['left_bottom']  = []
 
         self.m_shared_robot.register_component(port, self)
+
 # pylint: enable=W0102
 
     def get_distance_cm(self, short_range=False) :
@@ -172,6 +180,12 @@ class DistanceSensor(Mock) :
         self.m_right_bottom = max(0,min(abs(brightness),100))
         self.m_left_bottom  = max(0,min(abs(brightness),100))
 
+        self.m_commands['command'][-1]      = 'light_up_all'
+        self.m_commands['right_top'][-1]    = self.m_right_top
+        self.m_commands['left_top'][-1]     = self.m_left_top
+        self.m_commands['right_bottom'][-1] = self.m_right_bottom
+        self.m_commands['left_bottom'][-1]  = self.m_left_bottom
+
     def light_up(self, right_top, left_top, right_bottom, left_bottom) :
         """ Light all color sensor LEDs
         ---
@@ -197,12 +211,25 @@ class DistanceSensor(Mock) :
         self.m_right_bottom = max(0,min(abs(right_bottom),100))
         self.m_left_bottom = max(0,min(abs(left_bottom),100))
 
+        self.m_commands['command'][-1]      = 'light_up'
+        self.m_commands['right_top'][-1]    = self.m_right_top
+        self.m_commands['left_top'][-1]     = self.m_left_top
+        self.m_commands['right_bottom'][-1] = self.m_right_bottom
+        self.m_commands['left_bottom'][-1]  = self.m_left_bottom
+
 # ----------------- SIMULATION FUNCTIONS -----------------
 
     def step(self) :
         """ Step to the next simulation step """
 
         self.m_distance = int(self.m_scenario['distance'][self.m_current_step])
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['command'].append(None)
+        self.m_commands['right_top'].append(None)
+        self.m_commands['left_top'].append(None)
+        self.m_commands['right_bottom'].append(None)
+        self.m_commands['left_bottom'].append(None)
 
         super().step()
 

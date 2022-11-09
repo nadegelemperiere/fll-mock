@@ -68,7 +68,18 @@ class Motor(Mock) :
         self.m_delta_degrees            = 0
         self.s_default_columns  = {
             'degrees':'degrees',
+            'time' : 'time',
         }
+        self.m_commands['time']         = []
+        self.m_commands['command']      = []
+        self.m_commands['speed']        = []
+        self.m_commands['power']        = []
+        self.m_commands['degrees']      = []
+        self.m_commands['direction']    = []
+        self.m_commands['seconds']      = []
+        self.m_commands['rotations']    = []
+        self.m_commands['stall']        = []
+
         self.m_position                 = 0
 
         self.m_was_interrupted          = False
@@ -99,8 +110,12 @@ class Motor(Mock) :
         if degrees < 0 or degrees >= 360 :
             raise ValueError('degrees is not in the range 0-359')
 
-
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
+
+        self.m_commands['command'][-1]      = 'run_to_position'
+        self.m_commands['speed'][-1]        = speed
+        self.m_commands['degrees'][-1]      = degrees
+        self.m_commands['direction'][-1]    = direction
 
     def run_to_degrees_counted(self, degrees, speed=None):
         """ Runs the motor until the number of degrees counted
@@ -119,6 +134,10 @@ class Motor(Mock) :
 
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
+        self.m_commands['command'][-1]  = 'run_to_degrees_counted'
+        self.m_commands['speed'][-1]    = speed
+        self.m_commands['degrees'][-1]  = degrees
+
     def run_for_degrees(self, degrees, speed=None):
         """ Runs the motor for a specified number of degrees.
         ---
@@ -134,6 +153,10 @@ class Motor(Mock) :
             raise TypeError('speed is not an integer')
 
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
+
+        self.m_commands['command'][-1]  = 'run_for_degrees'
+        self.m_commands['speed'][-1]    = speed
+        self.m_commands['degrees'][-1]  = degrees
 
     def run_for_rotations(self, rotations, speed=None):
         """ Runs the motor for a specified number of rotations.
@@ -151,6 +174,10 @@ class Motor(Mock) :
 
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
+        self.m_commands['command'][-1]      = 'run_for_rotations'
+        self.m_commands['rotations'][-1]    = rotations
+        self.m_commands['speed'][-1]        = speed
+
     def run_for_seconds(self, seconds, speed=None):
         """ Runs the motor for a specified number of seconds.
         ---
@@ -167,6 +194,10 @@ class Motor(Mock) :
 
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
+        self.m_commands['command'][-1]  = 'run_for_seconds'
+        self.m_commands['seconds'][-1]  = seconds
+        self.m_commands['speed'][-1]    = speed
+
     def start(self, speed=None) :
         """ Activate motor
         ---
@@ -180,8 +211,13 @@ class Motor(Mock) :
 
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
 
+        self.m_commands['command'][-1]  = 'start'
+        self.m_commands['speed'][-1]    = speed
+
     def stop(self) :
         """ Stop base """
+
+        self.m_commands['command'][-1]  = 'stop'
 
     def start_at_power(self, power) :
         """ Activate motors
@@ -193,6 +229,9 @@ class Motor(Mock) :
             raise TypeError('power is not an integer')
 
         power = min(max(power,- self.s_max_power),self.s_max_power)
+
+        self.m_commands['command'][-1]  = 'start_at_power'
+        self.m_commands['power'][-1]    = power
 
     def get_speed(self) :
         """ Return current speed
@@ -256,6 +295,9 @@ class Motor(Mock) :
 
         self.m_default_speed = speed
 
+        self.m_commands['command'][-1]  = 'set_default_speed'
+        self.m_commands['speed'][-1]    = speed
+
     def set_degrees_counted(self, degrees_counted) :
         """ Reinitialize the motors degrees
         ---
@@ -267,6 +309,9 @@ class Motor(Mock) :
 
         self.m_delta_degrees = self.m_degrees - degrees_counted
 
+        self.m_commands['command'][-1]  = 'set_degrees_counted'
+        self.m_commands['degrees'][-1]  = degrees_counted
+
     def set_stall_detection(self, stop_when_stalled) :
         """ Sets the action to be performed on stop
         ---
@@ -275,6 +320,8 @@ class Motor(Mock) :
         if not isinstance(stop_when_stalled, bool) :
             raise TypeError('stop_when_stalled is not a boolean')
 
+        self.m_commands['command'][-1]  = 'set_stall_detection'
+        self.m_commands['stall'][-1]    = stop_when_stalled
 
         self.m_shall_stop_when_stalled = stop_when_stalled
 
@@ -300,6 +347,16 @@ class Motor(Mock) :
 
         self.m_degrees          = int(round(self.m_scenario['degrees'][self.m_current_step]))
         self.m_position         = (self.m_degrees) % 360
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['speed'].append(None)
+        self.m_commands['power'].append(None)
+        self.m_commands['degrees'].append(None)
+        self.m_commands['direction'].append(None)
+        self.m_commands['seconds'].append(None)
+        self.m_commands['rotations'].append(None)
+        self.m_commands['command'].append(None)
+        self.m_commands['stall'].append(None)
 
         super().step()
 

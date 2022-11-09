@@ -127,7 +127,18 @@ class LightMatrix(Mock) :
         """
 
         super().__init__()
-        self.off()
+        self.s_default_columns  = {
+            'time' : 'time',
+        }
+        self.m_commands['time']     = []
+        self.m_commands['commands'] = []
+        self.m_commands['image']    = []
+        self.m_commands['pixels']   = []
+        self.m_commands['text']     = []
+
+        for i_line in range(0,5) :
+            for i_column in range(0,5) :
+                self.m_matrix[i_line * 5 + i_column] = 0
 
 # pylint: enable=W0102
 
@@ -145,6 +156,9 @@ class LightMatrix(Mock) :
 
         if image not in self.s_lightmatrix_images :
             raise ValueError('Unknown image ' + image + ' in light matrix')
+
+        self.m_commands['command'][-1]  = 'show_image'
+        self.m_commands['image'][-1]    = image
 
         self.m_matrix = self.s_lightmatrix_images[image]
         for i_pixel in range(0,25) :
@@ -174,6 +188,9 @@ class LightMatrix(Mock) :
         if y < 0 or y > 4 :
             raise ValueError('y value is not in [0,4]')
 
+        self.m_commands['command'][-1]  = 'set_pixel'
+        self.m_commands['pixels'][-1]   = {'x' : x, 'y' : y}
+
         self.m_matrix[x + 5 * y] = brightness
         self.__stdout()
 # pylint: enable=C0103
@@ -184,13 +201,19 @@ class LightMatrix(Mock) :
         text  (str)         : The text to display
         """
 
+        self.m_commands['command'][-1]  = 'write'
+        self.m_commands['text'][-1]     = text
+
         for letter in text :
             self.m_matrix = self.s_lightmatrix_images[str(letter).upper()]
             self.__stdout()
             sleep(0.01)
 
+
     def off(self) :
         """ Shut down all the pixel of the light matrix """
+
+        self.m_commands['command'][-1]  = 'off'
 
         for i_line in range(0,5) :
             for i_column in range(0,5) :
@@ -202,6 +225,13 @@ class LightMatrix(Mock) :
 # pylint: disable=W0246
     def step(self) :
         """ Step to the next simulation step """
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['command'].append(None)
+        self.m_commands['image'].append(None)
+        self.m_commands['pixels'].append(None)
+        self.m_commands['text'].append(None)
+
         super().step()
 # pylint: enable=W0246
 

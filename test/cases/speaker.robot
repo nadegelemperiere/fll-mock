@@ -31,16 +31,17 @@ ${EXCEL_DATA_FILE}                ${data}/speaker-scenarii.xlsx
     ${scenario}         Create Scenario      ${JSON_CONF_FILE}
     ${speaker}          Create Object        Speaker
     ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${speaker}
+    Play Scenario During Steps     ${speaker}    1
     Use Object Method  ${speaker}    set_volume    False    -1    50
     ${volume}            Use Object Method  ${speaker}    get_volume    True
-    Should Be Equal As Numbers    ${volume}    50
+    Should Be Equal As Numbers     ${volume}    50
 
 10.3 Test The Parallel Behaviour Of Beep functions
     [Tags]  Speaker
     ${scenario}         Create Scenario      ${JSON_CONF_FILE}
     ${speaker}          Create Object        Speaker
     ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${speaker}
-    Play Scenario During Steps  ${speaker}     0
+    Play Scenario During Steps  ${speaker}     1
     ${thread}           Start Method In A Thread    ${speaker}    beep    60    2
     ${is_alive}         Is Thread Running    ${thread}
     Should Be True      ${is_alive}

@@ -52,7 +52,10 @@ class MotionSensor(Mock) :
             'pitch':'pitch',
             'roll':'roll',
             'gesture':'gesture',
+            'time' : 'time',
         }
+        self.m_commands['time'] = []
+        self.m_commands['command'] = []
 
         self.m_zero_yaw_angle    = 0
         self.m_last_gesture      = ''
@@ -88,6 +91,7 @@ class MotionSensor(Mock) :
     def reset_yaw_angle(self) :
         """ Reset reference yaw angle
         """
+        self.m_commands['command'][-1] = 'reset_yaw_angle'
         self.m_zero_yaw_angle = self.m_yaw
 
     def get_gesture(self) :
@@ -166,6 +170,9 @@ class MotionSensor(Mock) :
             self.m_gesture = ''
         else :
             raise ValueError('Invalid gesture : ' + gesture)
+
+        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
+        self.m_commands['command'].append(None)
 
         super().step()
 

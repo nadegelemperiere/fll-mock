@@ -21,15 +21,17 @@ ${EXCEL_DATA_FILE}                ${data}/light-matrix-scenarii.xlsx
 
 6.1 Ensure Light Matrix Is Created With The Required Constants
     [Tags]  LightMatrix
-    ${scenario}     Create Scenario      ${JSON_CONF_FILE}
+    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
     ${matrix}       Create Object    LightMatrix
-    @{members} =    Create List    show_image    set_pixel    write     off
+    @{members} =    Create List      show_image    set_pixel    write     off
     Should Have Members    ${matrix}    ${members}
 
 6.2 Test Light Matrix Image Display
     [Tags]    LightMatrix
-    ${scenario}    Create Scenario      ${JSON_CONF_FILE}
-    ${matrix}      Create Object    LightMatrix
+    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
+    ${matrix}       Create Object    LightMatrix
+    ${scenario}     Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${matrix}
+    Play Scenario During Steps  ${matrix}     1
     Use Object Method  ${matrix}  show_image    False    -1    HEART
     ${heart}       Use Object Method  ${matrix}   get_matrix    True
     ${p}           Get From List      ${heart}    0
