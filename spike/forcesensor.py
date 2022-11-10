@@ -14,13 +14,12 @@ from time import sleep
 
 # Local includes
 from spike.mock import Mock
-from spike.robot import Robot
+from spike.context import Context
 
 class ForceSensor(Mock) :
     """ Force Sensor mocking function """
 
     m_force                     = 0
-    m_shared_robot              = None
 
     s_force_for_being_pressed   = 2
     s_max_force                 = 10
@@ -35,18 +34,18 @@ class ForceSensor(Mock) :
         """
 
         super().__init__()
-        self.m_shared_robot      = Robot()
 
-        if  self.m_shared_robot.get_component(port) is None or \
-            self.m_shared_robot.get_component(port) != 'ForceSensor' :
+        self.m_shared_context   = Context()
+        check_for_component = self.m_shared_context.m_robot.check_component(port, 'ForceSensor')
+        if  not check_for_component :
             raise ValueError('Port ' + port + ' does not host a force sensor')
+        self.m_shared_context.m_robot.register_component(port, self)
 
         self.m_force            = 0
         self.s_default_columns  = {
             'force':'force',
         }
 
-        self.m_shared_robot.register_component(port, self)
 # pylint: enable=W0102
 
     def wait_until_pressed(self) :

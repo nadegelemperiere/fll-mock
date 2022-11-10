@@ -22,7 +22,7 @@ ROBOT = False
 # Package includes
 from spike                  import Timer, PrimeHub, ColorSensor, DistanceSensor, ForceSensor, Motor, MotorPair, wait_for_seconds, wait_until
 from spike.button           import Button
-from spike                  import Robot
+from spike.context          import Context
 from spike.lightmatrix      import LightMatrix
 from spike.motionsensor     import MotionSensor
 from spike.speaker          import Speaker
@@ -32,7 +32,7 @@ from spike.timer            import TimerSingleton
 @keyword('Create Scenario')
 def create_scenario(configuration) :
 
-    result = Robot()
+    result = Context()
     result.load_configuration(configuration)
     return result
 

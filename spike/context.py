@@ -15,35 +15,26 @@ from json import load
 from openpyxl import load_workbook
 
 # Local includes
-from spike.mock import Mock
+from spike.truth import Truth
 
-class Robot(Mock) :
+class Context() :
     """ Singleton class managing a simulation context """
 
-    m_data = {}
-    m_configuration = {}
-    m_components = {}
+    m_robot         = None
 
-    m_x_position = 0
-    m_y_position = 0
-    m_z_position = 0
+    m_data          = {}
+    m_configuration = {}
 
     def __new__(cls):
 
         if not hasattr(cls, 'instance'):
-            cls.instance = super(Robot, cls).__new__(cls)
+            cls.instance = super(Context, cls).__new__(cls)
         return cls.instance
 
     def __init__(self) :
         """ Contructor """
-        self.s_default_columns  = {
-            'x':'x',
-            'y':'y',
-            'z':'z',
-        }
         if len(self.m_configuration) == 0 :
-            super().__init__()
-
+            self.m_robot = Truth()
 
     def load_configuration(self, configuration) :
         """ Loading robot static configuration
@@ -53,7 +44,10 @@ class Robot(Mock) :
         with open(configuration,'r', encoding='UTF-8') as file :
             self.m_configuration = load(file)
             file.close()
-        print(str(self.m_configuration))
+
+        if not 'robot' in self.m_configuration :
+            raise ValueError('Missing robot static configuration')
+        self.m_robot.configure(self.m_configuration['robot'])
 
     def load_scenario(self, filename, sheet) :
         """ Read scenario from excel file
@@ -88,14 +82,6 @@ class Robot(Mock) :
                 value = content_sheet.cell(i_row,col).value
                 self.m_data[header].append(value)
 
-    def step(self) :
-
-        self.m_x_position = int(self.m_scenario['x'][self.m_current_step])
-        self.m_y_position = int(self.m_scenario['y'][self.m_current_step])
-        self.m_z_position = int(self.m_scenario['z'][self.m_current_step])
-
-        super().step()
-
     def initialize(self, data) :
         """ Loading a mock with scenario simulated data
         ---
@@ -103,32 +89,3 @@ class Robot(Mock) :
         """
         data.initialize(self.m_data)
 
-    def register_component(self, port, component) :
-        """ Return type of component hosted by the port
-        ---
-        port (str)      : port to check
-        component (obj) : the component hosted
-        """
-
-        if port in self.m_configuration['ports'] :
-            test_type = "<class 'spike." + self.m_configuration['ports'][port].lower() + \
-                '.' + self.m_configuration['ports'][port] + "'>"
-            if str(type(component)) == test_type :
-                self.m_components[port] = component
-            else :
-                raise TypeError('component does not fit in port ' + port)
-        else:
-            raise TypeError('component does not fit in port ' + port)
-
-    def get_component(self, port) :
-        """ Return type of component hosted by the port
-        ---
-        port (str)      : port to check
-        ---
-        returns (str)   : the type of component hosted
-        """
-
-        result = None
-        if port in self.m_configuration['ports'] :
-            result = self.m_configuration['ports'][port]
-        return result

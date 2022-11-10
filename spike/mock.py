@@ -15,6 +15,7 @@ class Mock() :
     m_commands          = {}
     m_current_step      = -1
     m_columns           = {}
+    m_shared_context    = None
 
     s_default_columns   = {}
 
@@ -30,7 +31,7 @@ class Mock() :
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def configure(self, columns = None) :
+    def columns(self, columns = None) :
         """ Define the mapping between excel file columns and
             the mock requied data
         ---

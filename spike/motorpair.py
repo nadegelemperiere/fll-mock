@@ -10,7 +10,7 @@
 
 # Local includes
 from spike.mock import Mock
-from spike.robot import Robot
+from spike.context import Context
 from spike.motor import motor_stop_actions
 
 # Constants
@@ -29,7 +29,6 @@ class MotorPair(Mock) :
     m_stop_action   = 'brake'
     m_left_motor    = None
     m_right_motor   = None
-    m_shared_robot  = None
 
     s_max_speed     = 100
     s_max_steering  = 100
@@ -45,25 +44,25 @@ class MotorPair(Mock) :
         """
 
         super().__init__()
-        self.m_shared_robot      = Robot()
 
-        if  self.m_shared_robot.get_component(left_motor) is None or \
-            self.m_shared_robot.get_component(left_motor) != 'Motor' :
+        self.m_shared_context = Context()
+        check_for_component = self.m_shared_context.m_robot.check_component(left_motor, 'Motor')
+        if  not check_for_component :
             raise ValueError('Port ' + left_motor + ' does not host a motor')
-
-        if  self.m_shared_robot.get_component(right_motor) is None or \
-            self.m_shared_robot.get_component(right_motor) != 'Motor' :
+        check_for_component = self.m_shared_context.m_robot.check_component(right_motor, 'Motor')
+        if  not check_for_component :
             raise ValueError('Port ' + right_motor + ' does not host a motor')
 
-        if  left_motor not in self.m_shared_robot.m_components :
+        self.m_left_motor    = self.m_shared_context.m_robot.get_component(left_motor)
+        self.m_right_motor   = self.m_shared_context.m_robot.get_component(right_motor)
+
+        if self.m_left_motor is None :
             raise ValueError('Motor ' + left_motor + ' has not been initialized')
-        if  right_motor not in self.m_shared_robot.m_components :
+        if self.m_right_motor is None :
             raise ValueError('Motor ' + right_motor + ' has not been initialized')
 
         self.m_default_speed = 100
         self.m_stop_action   = 'brake'
-        self.m_left_motor    = self.m_shared_robot.m_components[left_motor]
-        self.m_right_motor   = self.m_shared_robot.m_components[right_motor]
         self.s_default_columns  = {
             'left degrees':'left degrees',
             'right degrees':'right degrees',

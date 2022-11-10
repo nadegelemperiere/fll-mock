@@ -10,7 +10,7 @@
 
 # Local includes
 from spike.mock import Mock
-from spike.robot import Robot
+from spike.context import Context
 
 # Constants
 motor_directions = [
@@ -35,7 +35,6 @@ class Motor(Mock) :
     m_degrees                   = 0
     m_position                  = 0
     m_delta_degrees             = 0
-    m_shared_robot              = None
 
     m_was_interrupted           = False
     m_was_stalled               = False
@@ -54,11 +53,12 @@ class Motor(Mock) :
         """
 
         super().__init__()
-        self.m_shared_robot      = Robot()
 
-        if  self.m_shared_robot.get_component(port) is None or \
-            self.m_shared_robot.get_component(port) != 'Motor' :
+        self.m_shared_context = Context()
+        check_for_component = self.m_shared_context.m_robot.check_component(port, 'Motor')
+        if  not check_for_component :
             raise ValueError('Port ' + port + ' does not host a motor')
+        self.m_shared_context.m_robot.register_component(port, self)
 
         self.m_default_speed            = 100
         self.m_stop_action              = 'brake'
@@ -85,8 +85,6 @@ class Motor(Mock) :
         self.m_was_interrupted          = False
         self.m_was_stalled              = False
         self.m_shall_stop_when_stalled  = False
-
-        self.m_shared_robot.register_component(port, self)
 
     def run_to_position(self, degrees, direction='shortest path', speed=None) :
         """ Runs the motor to an absolute position.

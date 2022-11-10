@@ -16,7 +16,7 @@ from webcolors import rgb_to_name
 
 # Local includes
 from spike.mock     import Mock
-from spike.robot    import Robot
+from spike.context  import Context
 
 # Constants
 css3_to_spike_colormap = {
@@ -44,8 +44,6 @@ class ColorSensor(Mock) :
     m_light2            = 100
     m_light3            = 100
 
-    m_shared_robot      = None
-
 
 # ------------ SPIKE COLOR SENSOR FUNCTIONS --------------
 
@@ -57,11 +55,12 @@ class ColorSensor(Mock) :
         """
 
         super().__init__()
-        self.m_shared_robot      = Robot()
 
-        if  self.m_shared_robot.get_component(port) is None or \
-            self.m_shared_robot.get_component(port) != 'ColorSensor' :
+        self.m_shared_context   = Context()
+        check_for_component = self.m_shared_context.m_robot.check_component(port, 'ColorSensor')
+        if  not check_for_component :
             raise ValueError('Port ' + port + ' does not host a color sensor')
+        self.m_shared_context.m_robot.register_component(port, self)
 
         self.m_light1           = 100
         self.m_light2           = 100
@@ -81,7 +80,6 @@ class ColorSensor(Mock) :
         self.m_commands['light2']   = []
         self.m_commands['light3']   = []
 
-        self.m_shared_robot.register_component(port, self)
 
 # pylint: enable=W0102
 

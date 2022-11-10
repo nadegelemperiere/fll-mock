@@ -10,9 +10,7 @@
 # Latest revision: 17 october 2021
 # --------------------------------------------------- """
 
-from os import path
 from setuptools import setup, find_packages
-from re import search
 
 setup(
     name = "fll-mock",

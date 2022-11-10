@@ -14,5 +14,4 @@ from spike.distancesensor import DistanceSensor
 from spike.forcesensor import ForceSensor
 from spike.motor import Motor
 from spike.motorpair import MotorPair
-from spike.robot import Robot
 from spike.timer import Timer, wait_for_seconds, wait_until
