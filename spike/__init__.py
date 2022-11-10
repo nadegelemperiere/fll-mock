@@ -15,4 +15,3 @@ from spike.forcesensor import ForceSensor
 from spike.motor import Motor
 from spike.motorpair import MotorPair
 from spike.timer import Timer, wait_for_seconds, wait_until
-from spike.context import Context
