@@ -48,3 +48,9 @@ jobs:
                 PYTHONPATH: /github/workspace/site-packages
               with:
                 args: --sarif-file-output=snyk.sarif --file=setup.py
+
+            - name: Upload snyk result to GitHub Code Scanning
+              uses: github/codeql-action/upload-sarif@v1
+              if: always()
+              with:
+                sarif_file: snyk.sarif
