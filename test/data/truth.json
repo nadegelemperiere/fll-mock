@@ -1,6 +1,5 @@
 {
-    "behaviour" :
-    {
+    "behaviour" : {
         "load_only" : true
     },
     "ports" : {

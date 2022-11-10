@@ -121,7 +121,19 @@ class Truth(Mock) :
             result = self.m_components[port]
         return result
 
+
+    def initialize(self) :
+        """ Initialize simulation from context """
+
+        if self.m_behaviour['load_only'] :
+            for component in self.m_components :
+                component.initialize()
+
+        else :
+            super().initialize()
+
     def step(self) :
+        """ Step to the next simulation step """
 
         if self.m_behaviour['load_only'] :
             for component in self.m_components :
