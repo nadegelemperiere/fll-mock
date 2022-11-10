@@ -30,16 +30,21 @@ jobs:
               uses: actions/checkout@master
 
             - name: Installing dependencies
-              run: pip install -r requirements-test.txt --target site-packages
-
-            - name: Installing dependencies
               run: pip install -r requirements.txt --target site-packages
 
             - name: Linting module
+              continue-on-error: true
               run: pylint spike
 
             - name: Run pip-audit to check for vulnerabilities
-              run: pip-audit -r requirements-test.txt --format json
-
-            - name: Run pip-audit to check for vulnerabilities
+              continue-on-error: true
               run: pip-audit -r requirements.txt --format json
+
+            - name: Run Snyk to check for vulnerabilities
+              continue-on-error: true
+              uses: snyk/actions/python@master
+              env:
+                SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+                PYTHONPATH: /github/workspace/site-packages
+              with:
+                args: --sarif-file-output=snyk.sarif --file=setup.py
