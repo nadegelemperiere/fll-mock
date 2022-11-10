@@ -23,6 +23,7 @@ class Truth(Mock) :
 
     m_ports      = {}
     m_structure  = {}
+    m_behaviour  = {}
 
     m_components = {}
 
@@ -57,9 +58,12 @@ class Truth(Mock) :
             raise ValueError('Missing port information in context robot configuration')
         if 'structure' not in conf:
             raise ValueError('Missing structure information in context robot configuration')
+        if 'behaviour' not in conf:
+            raise ValueError('Missing behaviour information in context robot configuration')
 
         self.m_ports = conf['ports']
         self.m_structure = conf['structure']
+        self.m_behaviour = conf['behaviour']
 
     def check_component(self, port, component) :
         """ Check the component type exists on the port
@@ -119,9 +123,15 @@ class Truth(Mock) :
 
     def step(self) :
 
-        self.m_x_position = int(self.m_scenario['x'][self.m_current_step])
-        self.m_y_position = int(self.m_scenario['y'][self.m_current_step])
-        self.m_z_position = int(self.m_scenario['z'][self.m_current_step])
+        if self.m_behaviour['load_only'] :
+            for component in self.m_components :
+                component.step()
+
+        else :
+
+            self.m_x_position = int(self.m_scenario['x'][self.m_current_step])
+            self.m_y_position = int(self.m_scenario['y'][self.m_current_step])
+            self.m_z_position = int(self.m_scenario['z'][self.m_current_step])
 
         super().step()
 

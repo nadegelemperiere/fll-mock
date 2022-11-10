@@ -35,7 +35,6 @@ def create_scenario(configuration, filename, sheet) :
 
     scenario = Context()
     scenario.load(filename, sheet)
-    print(str(scenario.get_data()))
     truth = Truth()
     truth.load_configuration(configuration)
 
