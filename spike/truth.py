@@ -109,6 +109,7 @@ class Truth(Mock) :
         else:
             raise TypeError('component does not fit in port ' + port)
 
+
     def get_component(self, port) :
         """ Return the component existing on the port
         ---
@@ -121,14 +122,14 @@ class Truth(Mock) :
             result = self.m_components[port]
         return result
 
+# pylint: disable=W0612
 
     def initialize(self) :
         """ Initialize simulation from context """
 
         if self.m_behaviour['load_only'] :
-            for component in self.m_components :
+            for port,component in self.m_components.items() :
                 component.initialize()
-
         else :
             super().initialize()
 
@@ -136,16 +137,15 @@ class Truth(Mock) :
         """ Step to the next simulation step """
 
         if self.m_behaviour['load_only'] :
-            for component in self.m_components :
+            for port, component in self.m_components.items() :
                 component.step()
-
         else :
-
             self.m_x_position = int(self.m_scenario['x'][self.m_current_step])
             self.m_y_position = int(self.m_scenario['y'][self.m_current_step])
             self.m_z_position = int(self.m_scenario['z'][self.m_current_step])
 
         super().step()
+# pylint: enable=W0612
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

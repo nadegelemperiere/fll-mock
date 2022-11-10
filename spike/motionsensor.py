@@ -89,9 +89,7 @@ class MotionSensor(Mock) :
         return self.m_yaw - self.m_zero_yaw_angle
 
     def reset_yaw_angle(self) :
-        """ Reset reference yaw angle
-        """
-        self.m_commands['command'][-1] = 'reset_yaw_angle'
+        """ Reset reference yaw angle """
         self.m_zero_yaw_angle = self.m_yaw
 
     def get_gesture(self) :

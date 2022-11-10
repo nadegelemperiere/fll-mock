@@ -84,6 +84,15 @@ class MotorPair(Mock) :
         self.m_commands['rotations']    = []
         self.m_commands['action']       = []
 
+        self.m_left_motor.columns({
+            'time'    : 'time',
+            'degrees' : 'left degrees',
+        })
+        self.m_right_motor.columns({
+            'time'    : 'time',
+            'degrees' : 'right degrees',
+        })
+
     def move(self, amount, unit='cm', steering=0, speed=None) :
         """ Activate both motors to move from a given distance
         ---
@@ -265,10 +274,6 @@ class MotorPair(Mock) :
         if unit not in ['cm', 'inches'] :
             raise ValueError('unit is not one of the allowed values')
 
-        self.m_commands['command'][-1]  = 'set_motor_rotation'
-        self.m_commands['amount'][-1]   = amount
-        self.m_commands['unit'][-1]     = unit
-
     def set_default_speed(self, speed) :
         """ Set the motorpair default speed
         ---
@@ -304,6 +309,21 @@ class MotorPair(Mock) :
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
+    def columns(self, columns = None) :
+        """ Define the mapping between excel file columns and
+            the mock requied data
+        ---
+        columns  (dict) : The excel simulation data column name
+        """
+        self.m_left_motor.columns({
+            'time'       : self.m_columns['time'],
+            'degrees'    : self.m_columns['left degrees'],
+        })
+        self.m_right_motor.columns({
+            'time'       : self.m_columns['time'],
+            'degrees'    : self.m_columns['right degrees'],
+        })
+
     def step(self) :
         """ Step to the next simulation step """
 
@@ -329,14 +349,4 @@ class MotorPair(Mock) :
 
         super().step()
 
-    def check_columns(self, columns) :
-        """ Check that all the required data have been provided for simulation
-        ---
-        columns  (dict)   : the excel simulation data associated column name
-        """
-
-        if not 'left degrees' in columns :
-            raise Exception('Missing "left degrees" in ' + str(columns) + ' dictionary')
-        if not 'right degrees' in columns :
-            raise Exception('Missing "right degrees" in ' + str(columns) + ' dictionary')
 # pylint: enable=R0902

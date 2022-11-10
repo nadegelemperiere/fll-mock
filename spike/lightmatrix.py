@@ -131,7 +131,7 @@ class LightMatrix(Mock) :
             'time' : 'time',
         }
         self.m_commands['time']     = []
-        self.m_commands['commands'] = []
+        self.m_commands['command']  = []
         self.m_commands['image']    = []
         self.m_commands['pixels']   = []
         self.m_commands['text']     = []

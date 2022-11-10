@@ -31,7 +31,9 @@ class Mock() :
         columns  (dict)   : The excel simulation data column name
         """
         self.m_scenario         = {}
+        self.m_commands         = {}
         self.m_current_step     = -1
+        self.m_columns          = {}
         self.m_shared_context   = Context()
         self.m_shared_truth     = None
 
@@ -61,8 +63,8 @@ class Mock() :
                 message = str(type(self)) + ' : "' + col + '" data not found in excel sheet'
                 raise Exception(message)
             self.m_scenario[column] = []
-            for status in data[self.m_columns[column]]:
-                self.m_scenario[column].append(status)
+            for value in data[self.m_columns[column]]:
+                self.m_scenario[column].append(value)
 
         self.restart()
 # pylint: enable=R0801
