@@ -8,9 +8,6 @@
 # Latest revision: 04 november 2022
 # --------------------------------------------------- """
 
-# system includes
-from json import load
-
 # Openpyxl includes
 from openpyxl import load_workbook
 

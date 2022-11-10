@@ -11,9 +11,6 @@
 # system includes
 from json import load
 
-# Openpyxl includes
-from openpyxl import load_workbook
-
 # Local includes
 from spike.mock import Mock
 
@@ -56,9 +53,9 @@ class Truth(Mock) :
             conf = load(file)
             file.close()
 
-        if not 'ports' in conf :
+        if 'ports' not in conf :
             raise ValueError('Missing port information in context robot configuration')
-        if not 'structure' in conf:
+        if 'structure' not in conf:
             raise ValueError('Missing structure information in context robot configuration')
 
         self.m_ports = conf['ports']
@@ -119,9 +116,6 @@ class Truth(Mock) :
         if port in self.m_components :
             result = self.m_components[port]
         return result
-
-    def initialize(self) :
-        super().initialize()
 
     def step(self) :
 
