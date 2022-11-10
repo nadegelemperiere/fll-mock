@@ -18,7 +18,7 @@ from openpyxl import load_workbook
 from spike.mock import Mock
 
 class Truth(Mock) :
-    """ Class describing the robot ground truth """
+    """ Singleton class describing the robot ground truth """
 
     m_x_position = 0
     m_y_position = 0
@@ -29,11 +29,16 @@ class Truth(Mock) :
 
     m_components = {}
 
+    def __new__(cls):
+
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Truth, cls).__new__(cls)
+        return cls.instance
+
     def __init__(self) :
         """ Contructor """
 
-        self.m_ports      = {}
-        self.m_structure  = {}
+        super().__init__()
 
         self.s_default_columns  = {
             'x':'x',
@@ -41,18 +46,23 @@ class Truth(Mock) :
             'z':'z',
         }
 
-    def configure(self, configuration) :
-        """ Configure real robot context
+    def load_configuration(self, configuration) :
+        """ Loading robot static configuration
         ---
-        configuration  (dict)   : the robot static configuration
+        configuration (str) : Json file containing robots parameters
         """
-        if not 'ports' in configuration :
+        conf = {}
+        with open(configuration,'r', encoding='UTF-8') as file :
+            conf = load(file)
+            file.close()
+
+        if not 'ports' in conf :
             raise ValueError('Missing port information in context robot configuration')
-        if not 'structure' in configuration :
+        if not 'structure' in conf:
             raise ValueError('Missing structure information in context robot configuration')
 
-        self.m_ports = configuration['ports']
-        self.m_structure = configuration['structure']
+        self.m_ports = conf['ports']
+        self.m_structure = conf['structure']
 
     def check_component(self, port, component) :
         """ Check the component type exists on the port
@@ -83,6 +93,18 @@ class Truth(Mock) :
                 self.m_components[port] = component
             else :
                 raise TypeError('component does not fit in port ' + port)
+        elif port == 'pair' :
+            test_type = "<class 'spike.motorpair.MotorPair'>"
+            if str(type(component)) == test_type :
+                self.m_components[port] = component
+            else :
+                raise TypeError('component does not fit in port ' + port)
+        elif port == 'hub' :
+            test_type = "<class 'spike.hub.PrimeHub'>"
+            if str(type(component)) == test_type :
+                self.m_components[port] = component
+            else :
+                raise TypeError('component does not fit in port ' + port)
         else:
             raise TypeError('component does not fit in port ' + port)
 
@@ -98,6 +120,8 @@ class Truth(Mock) :
             result = self.m_components[port]
         return result
 
+    def initialize(self) :
+        super().initialize()
 
     def step(self) :
 

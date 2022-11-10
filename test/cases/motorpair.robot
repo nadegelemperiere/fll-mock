@@ -13,21 +13,21 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/motor-pair-scenarii.xlsx
 
 *** Test Cases ***
 
 9.1 Ensure MotorPair Is Created With The Required Constants
     [Tags]  MotorPair
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
+    ${scenario}     Create Scenario  ${JSON_CONF_FILE}     ${EXCEL_DATA_FILE}    simple
     ${motor}        Create Object    MotorPair
-    @{members} =    Create List    move    start    stop    move_tank    start_tank    start_at_power    start_tank_at_power    get_default_speed    set_motor_rotation    set_default_speed    set_stop_action
+    @{members} =    Create List      move    start    stop    move_tank    start_tank    start_at_power    start_tank_at_power    get_default_speed    set_motor_rotation    set_default_speed    set_stop_action
     Should Have Members    ${motor}    ${members}
 
 9.2 Ensure Error Management Is Correctly Implemented
     [Tags]  MotorPair
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
+    ${scenario}     Create Scenario  ${JSON_CONF_FILE}     ${EXCEL_DATA_FILE}    simple
     ${motor}        Create Object    MotorPair
     Run Keyword And Expect Error     TypeError: amount is not a number                    Use Object Method  ${motor}     move                   False    -1    whatever    cm    0    100
     Run Keyword And Expect Error     TypeError: unit is not a string                      Use Object Method  ${motor}     move                   False    -1    180    100    0     100

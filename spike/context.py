@@ -14,16 +14,10 @@ from json import load
 # Openpyxl includes
 from openpyxl import load_workbook
 
-# Local includes
-from spike.truth import Truth
-
 class Context() :
     """ Singleton class managing a simulation context """
 
-    m_robot         = None
-
     m_data          = {}
-    m_configuration = {}
 
     def __new__(cls):
 
@@ -31,25 +25,7 @@ class Context() :
             cls.instance = super(Context, cls).__new__(cls)
         return cls.instance
 
-    def __init__(self) :
-        """ Contructor """
-        if len(self.m_configuration) == 0 :
-            self.m_robot = Truth()
-
-    def load_configuration(self, configuration) :
-        """ Loading robot static configuration
-        ---
-        configuration (str) : Json file containing robots parameters
-        """
-        with open(configuration,'r', encoding='UTF-8') as file :
-            self.m_configuration = load(file)
-            file.close()
-
-        if not 'robot' in self.m_configuration :
-            raise ValueError('Missing robot static configuration')
-        self.m_robot.configure(self.m_configuration['robot'])
-
-    def load_scenario(self, filename, sheet) :
+    def load(self, filename, sheet) :
         """ Read scenario from excel file
         ---
         filename (str)  : Excel file in which the scenario data are located
@@ -80,12 +56,13 @@ class Context() :
         for i_row in range(2,content_sheet.max_row + 1) :
             for col,header in column_to_header.items() :
                 value = content_sheet.cell(i_row,col).value
+                if isinstance(value,str) and value == 'True'  : value = True
+                if isinstance(value,str) and value == 'False' : value = False
                 self.m_data[header].append(value)
 
-    def initialize(self, data) :
-        """ Loading a mock with scenario simulated data
+    def get_data(self) :
+        """ Return scenario data
         ---
-        data (obj)  : Mock object to initialize
+        returns (dict)  : Scenario data
         """
-        data.initialize(self.m_data)
-
+        return self.m_data

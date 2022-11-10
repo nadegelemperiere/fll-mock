@@ -12,8 +12,8 @@
 from time import sleep
 
 # Local includes
-from spike.mock import Mock
-from spike.context import Context
+from spike.mock     import Mock
+from spike.truth    import Truth
 
 # pylint: disable=R0902
 class DistanceSensor(Mock) :
@@ -41,11 +41,12 @@ class DistanceSensor(Mock) :
 
         super().__init__()
 
-        self.m_shared_context = Context()
-        check_for_component = self.m_shared_context.m_robot.check_component(port, 'DistanceSensor')
+
+        self.m_shared_truth   = Truth()
+        check_for_component = self.m_shared_truth.check_component(port, 'DistanceSensor')
         if  not check_for_component :
             raise ValueError('Port ' + port + ' does not host a distance sensor')
-        self.m_shared_context.m_robot.register_component(port, self)
+        self.m_shared_truth.register_component(port, self)
 
         self.m_right_top     = 100
         self.m_left_top      = 100

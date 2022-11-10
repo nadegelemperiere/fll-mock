@@ -15,22 +15,22 @@ Library         Collections
 
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/timer-scenarii.xlsx
 
 *** Test Cases ***
 12.1 Ensure Timer Is Created With The Required Constants
     [Tags]  Timer
-    ${scenario}      Create Scenario      ${JSON_CONF_FILE}
+    Create Scenario  ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${timer}         Create Object    Timer
     @{members} =     Create List    now    reset
     Should Have Members    ${timer}    ${members}
 
 12.2 Test Timer Behavior
     [Tags]  Timer
-    ${scenario}         Create Scenario      ${JSON_CONF_FILE}
-    ${s_timer}          Create Object        TimerSingleton
-    ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${s_timer}
+    Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${s_timer}         Create Object      TimerSingleton
+    Use Object Method  ${s_timer}         initialize
     Play Scenario During Steps  ${s_timer}     10
     ${timer1}           Create Object    Timer
     Use Object Method  ${timer1}    reset    False
@@ -45,9 +45,9 @@ ${EXCEL_DATA_FILE}                ${data}/timer-scenarii.xlsx
 
 12.3 Test The Parallel Behaviour Of Wait functions
     [Tags]  Timer
-    ${scenario}         Create Scenario      ${JSON_CONF_FILE}
-    ${s_timer}          Create Object        TimerSingleton
-    ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${s_timer}
+    Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${s_timer}          Create Object      TimerSingleton
+    Use Object Method   ${s_timer}         initialize
     Play Scenario During Steps  ${s_timer}     1
     ${thread}           Start Function In A Thread    wait_for_seconds    2
     ${is_alive}         Is Thread Running    ${thread}

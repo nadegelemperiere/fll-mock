@@ -14,22 +14,22 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/motor-scenarii.xlsx
 
 *** Test Cases ***
 
 8.1 Ensure Motor Is Created With The Required Constants
     [Tags]  Motor
-    ${scenario}        Create Scenario      ${JSON_CONF_FILE}
-    ${motor}           Create Object    Motor
-    @{members} =       Create List    run_to_position    run_to_degrees_counted    run_for_degrees    run_for_rotations    run_for_seconds    start    stop    start_at_power    get_speed    get_position    get_degrees_counted    get_default_speed    was_interrupted    was_stalled    set_degrees_counted    set_default_speed    set_stop_action    set_stall_detection
+    Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${motor}           Create Object      Motor
+    @{members} =       Create List        run_to_position    run_to_degrees_counted    run_for_degrees    run_for_rotations    run_for_seconds    start    stop    start_at_power    get_speed    get_position    get_degrees_counted    get_default_speed    was_interrupted    was_stalled    set_degrees_counted    set_default_speed    set_stop_action    set_stall_detection
     Should Have Members    ${motor}    ${members}
 
 8.2 Ensure Error Management Is Correctly Implemented
     [Tags]    Motor
-    ${scenario}        Create Scenario  ${JSON_CONF_FILE}
-    ${motor}           Create Object    Motor
+    Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${motor}           Create Object      Motor
     Run Keyword And Expect Error    TypeError: degrees is not an integer                       Use Object Method  ${motor}     run_to_position         False    -1    180.5     shortest path    100
     Run Keyword And Expect Error    TypeError: direction is not a string                       Use Object Method  ${motor}     run_to_position         False    -1    180       100              100
     Run Keyword And Expect Error    TypeError: speed is not an integer                         Use Object Method  ${motor}     run_to_position         False    -1    180       shortest path    95.5
@@ -54,9 +54,9 @@ ${EXCEL_DATA_FILE}                ${data}/motor-scenarii.xlsx
 
 8.3. Test Position Functions
     [Tags]    Motor
-    ${scenario}        Create Scenario      ${JSON_CONF_FILE}
-    ${motor}           Create Object     Motor
-    ${scenario}        Initialize Scenario    ${scenario}    ${EXCEL_DATA_FILE}    simple    ${motor}
+    Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${motor}           Create Object      Motor
+    Use Object Method  ${motor}           initialize
     Play Scenario During Steps     ${motor}    50
     ${d}        Use Object Method  ${motor}    get_degrees_counted     True
     ${p}        Use Object Method  ${motor}    get_position            True

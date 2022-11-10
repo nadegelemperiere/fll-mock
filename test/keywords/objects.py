@@ -28,26 +28,22 @@ from spike.motionsensor     import MotionSensor
 from spike.speaker          import Speaker
 from spike.statuslight      import StatusLight
 from spike.timer            import TimerSingleton
+from spike.truth            import Truth
 
 @keyword('Create Scenario')
-def create_scenario(configuration) :
+def create_scenario(configuration, filename, sheet) :
 
-    result = Context()
-    result.load_configuration(configuration)
-    return result
-
-@keyword('Initialize Scenario')
-def initialize_scenario(scenario, filename, sheet, object) :
-
-    scenario.load_scenario(filename, sheet)
-    scenario.initialize(object)
-    return scenario
+    scenario = Context()
+    scenario.load(filename, sheet)
+    print(str(scenario.get_data()))
+    truth = Truth()
+    truth.load_configuration(configuration)
 
 @keyword('Create Object')
 def create_object(object) :
 
     result = None
-    if object == 'Hub'                : result = PrimeHub()
+    if   object == 'Hub'              : result = PrimeHub()
     elif object == 'Button'           : result = Button()
     elif object == 'ColorSensor'      : result = ColorSensor('A')
     elif object == 'DistanceSensor'   : result = DistanceSensor('C')
@@ -64,6 +60,7 @@ def create_object(object) :
     elif object == 'Timer'            : result = Timer()
     elif object == 'TimerSingleton'   : result = TimerSingleton()
     else : raise Exception('Unknown object ' + object)
+
 
     return result
 

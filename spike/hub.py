@@ -17,6 +17,7 @@ from spike.speaker      import Speaker
 from spike.lightmatrix  import LightMatrix
 from spike.statuslight  import StatusLight
 from spike.motionsensor import MotionSensor
+from spike.truth        import Truth
 
 # Constants
 hub_ports = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -31,7 +32,7 @@ class PrimeHub() :
     status_light    = None
     motion_sensor   = None
 
-    m_ports         = {}
+    m_shared_truth  = None
 
     def __init__(self) :
         """ Contructor """
@@ -43,16 +44,5 @@ class PrimeHub() :
         self.status_light   = StatusLight
         self.motion_sensor  = MotionSensor()
 
-# ----------------- SIMULATION FUNCTIONS -----------------
-
-    def connect(self, ports) :
-        """ Sets the elements connected to the hub
-        ---
-        ports (dict) : Mapping between port and element types
-        """
-
-        self.m_ports = {}
-        for key,val in ports.items() :
-            if key not in hub_ports :
-                raise ValueError('port ' + key + ' not one of allowed ports')
-            self.m_ports[key] = val
+        self.m_shared_truth = Truth()
+        self.m_shared_truth.register_component('hub', self)

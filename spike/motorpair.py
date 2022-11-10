@@ -10,7 +10,7 @@
 
 # Local includes
 from spike.mock import Mock
-from spike.context import Context
+from spike.truth import Truth
 from spike.motor import motor_stop_actions
 
 # Constants
@@ -45,21 +45,23 @@ class MotorPair(Mock) :
 
         super().__init__()
 
-        self.m_shared_context = Context()
-        check_for_component = self.m_shared_context.m_robot.check_component(left_motor, 'Motor')
+        self.m_shared_truth = Truth()
+        check_for_component = self.m_shared_truth.check_component(left_motor, 'Motor')
         if  not check_for_component :
             raise ValueError('Port ' + left_motor + ' does not host a motor')
-        check_for_component = self.m_shared_context.m_robot.check_component(right_motor, 'Motor')
+        check_for_component = self.m_shared_truth.check_component(right_motor, 'Motor')
         if  not check_for_component :
             raise ValueError('Port ' + right_motor + ' does not host a motor')
 
-        self.m_left_motor    = self.m_shared_context.m_robot.get_component(left_motor)
-        self.m_right_motor   = self.m_shared_context.m_robot.get_component(right_motor)
+        self.m_left_motor    = self.m_shared_truth.get_component(left_motor)
+        self.m_right_motor   = self.m_shared_truth.get_component(right_motor)
 
         if self.m_left_motor is None :
             raise ValueError('Motor ' + left_motor + ' has not been initialized')
         if self.m_right_motor is None :
             raise ValueError('Motor ' + right_motor + ' has not been initialized')
+
+        self.m_shared_truth.register_component('pair', self)
 
         self.m_default_speed = 100
         self.m_stop_action   = 'brake'

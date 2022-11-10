@@ -14,22 +14,22 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
 
 *** Test Cases ***
 
 2.1 Ensure Color Sensor Is Created With The Required Constants
     [Tags]    ColorSensor
-    ${scenario}         Create Scenario        ${JSON_CONF_FILE}
-    ${sensor}           Create Object    ColorSensor
-    @{members} =        Create List    get_color    get_ambiant_light    get_reflected_light    get_rgb_intensity    get_red     get_green     get_blue     wait_until_color    wait_for_new_color     light_up     light_up_all
+    Create Scenario  ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
+    ${sensor}        Create Object    ColorSensor
+    @{members} =     Create List    get_color    get_ambiant_light    get_reflected_light    get_rgb_intensity    get_red     get_green     get_blue     wait_until_color    wait_for_new_color     light_up     light_up_all
     Should Have Members    ${sensor}    ${members}
 
 2.2 Ensure Error Management Is Correctly Implemented
     [Tags]  ColorSensor
-    ${scenario}         Create Scenario        ${JSON_CONF_FILE}
-    ${sensor}           Create Object    ColorSensor
+    Create Scenario  ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
+    ${sensor}        Create Object    ColorSensor
     Run Keyword And Expect Error    TypeError: brightness is not an integer    Use Object Method  ${sensor}     light_up_all    False    -1    12.5
     Run Keyword And Expect Error    TypeError: light_1 is not an integer       Use Object Method  ${sensor}     light_up        False    -1    12.5  50    50
     Run Keyword And Expect Error    TypeError: light_2 is not an integer       Use Object Method  ${sensor}     light_up        False    -1    50    12.5    50
@@ -37,9 +37,9 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
 
 2.3 Test Color Sensor Behavior On Simple Scenario
     [Tags]  ColorSensor
-    ${scenario}         Create Scenario        ${JSON_CONF_FILE}
-    ${sensor}           Create Object          ColorSensor
-    ${scenario}         Initialize Scenario    ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${sensor}           Create Object      ColorSensor
+    Use Object Method   ${sensor}          initialize
     @{steps} =          Create List    40      20       30      50       50
     @{red} =            Create List    1024    0        1024    0        0
     @{blue} =           Create List    1024    0        0       0        1024
@@ -75,9 +75,9 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
 
 2.4 Test The Parallel Behaviour Of Wait functions
     [Tags]  ColorSensor
-    ${scenario}         Create Scenario      ${JSON_CONF_FILE}
-    ${sensor}           Create Object        ColorSensor
-    ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${sensor}           Create Object      ColorSensor
+    Use Object Method   ${sensor}          initialize
     Play Scenario During Steps  ${sensor}     10
     ${thread}           Start Method In A Thread    ${sensor}    wait_until_color    red
     ${is_alive}         Is Thread Running    ${thread}
@@ -101,9 +101,9 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
 
 2.5 Test The Light Adjustment Functions And Their Impact On Color
     [Tags]  ColorSensor
-    ${scenario}         Create Scenario        ${JSON_CONF_FILE}
-    ${sensor}           Create Object          ColorSensor
-    ${scenario}         Initialize Scenario    ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    Create Scenario    ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
+    ${sensor}          Create Object      ColorSensor
+    Use Object Method  ${sensor}           initialize
     Play Scenario During Steps  ${sensor}     1
     ${c}                Use Object Method  ${sensor}    get_color  True
     Should Be Equal     white    ${c}

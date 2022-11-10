@@ -14,22 +14,22 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/distance-sensor-scenarii.xlsx
 
 *** Test Cases ***
 
 3.1 Ensure Distance Sensor Is Created With The Required Constants
     [Tags]    DistanceSensor
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
-    ${sensor}       Create Object    DistanceSensor
-    @{members} =    Create List    get_distance_cm    get_distance_inches    get_distance_percentage    wait_for_distance_farther_than    wait_for_distance_closer_than     light_up     light_up_all
+    Create Scenario  ${JSON_CONF_FILE}   ${EXCEL_DATA_FILE}    simple
+    ${sensor}        Create Object    DistanceSensor
+    @{members} =     Create List    get_distance_cm    get_distance_inches    get_distance_percentage    wait_for_distance_farther_than    wait_for_distance_closer_than     light_up     light_up_all
     Should Have Members    ${sensor}    ${members}
 
 3.2 Ensure Error Management Is Correctly Implemented
     [Tags]    DistanceSensor
-    ${scenario}         Create Scenario  ${JSON_CONF_FILE}
-    ${sensor}           Create Object    DistanceSensor
+    Create Scenario  ${JSON_CONF_FILE}   ${EXCEL_DATA_FILE}    simple
+    ${sensor}        Create Object    DistanceSensor
     Run Keyword And Expect Error    TypeError: brightness is not an integer     Use Object Method  ${sensor}     light_up_all    False    -1    12.5
     Run Keyword And Expect Error    TypeError: right_top is not an integer      Use Object Method  ${sensor}     light_up        False    -1    12.5  50    50    50
     Run Keyword And Expect Error    TypeError: left_top is not an integer       Use Object Method  ${sensor}     light_up        False    -1    50    12.5  50    50
@@ -38,9 +38,9 @@ ${EXCEL_DATA_FILE}                ${data}/distance-sensor-scenarii.xlsx
 
 3.3 Test Distance Sensor Behavior On Simple Scenario
     [Tags]    DistanceSensor
-    ${scenario}                    Create Scenario      ${JSON_CONF_FILE}
-    ${sensor}                      Create Object        DistanceSensor
-    ${scenario}                    Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    Create Scenario                ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${sensor}                      Create Object      DistanceSensor
+    Use Object Method              ${sensor}          initialize
     @{steps} =                     Create List    4      20     10     15     25
     @{distance_cm_lr} =            Create List    -1     70     40     160    -1
     @{distance_inches_lr} =        Create List    -1     28     16     63     -1
@@ -74,10 +74,10 @@ ${EXCEL_DATA_FILE}                ${data}/distance-sensor-scenarii.xlsx
     END
 
 3.4 Test The Parallel Behaviour Of Wait functions
-    [Tags]              DistanceSensor
-    ${scenario}         Create Scenario      ${JSON_CONF_FILE}
-    ${sensor}           Create Object        DistanceSensor
-    ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    [Tags]  DistanceSensor
+    Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${sensor}           Create Object      DistanceSensor
+    Use Object Method   ${sensor}          initialize
     Play Scenario During Steps  ${sensor}     10
     ${thread}           Start Method In A Thread    ${sensor}    wait_for_distance_closer_than    170    cm    False
     ${is_alive}         Is Thread Running    ${thread}

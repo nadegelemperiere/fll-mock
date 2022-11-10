@@ -13,8 +13,8 @@
 from time import sleep
 
 # Local includes
-from spike.mock import Mock
-from spike.context import Context
+from spike.mock     import Mock
+from spike.truth    import Truth
 
 class ForceSensor(Mock) :
     """ Force Sensor mocking function """
@@ -35,11 +35,11 @@ class ForceSensor(Mock) :
 
         super().__init__()
 
-        self.m_shared_context   = Context()
-        check_for_component = self.m_shared_context.m_robot.check_component(port, 'ForceSensor')
+        self.m_shared_truth   = Truth()
+        check_for_component = self.m_shared_truth.check_component(port, 'ForceSensor')
         if  not check_for_component :
             raise ValueError('Port ' + port + ' does not host a force sensor')
-        self.m_shared_context.m_robot.register_component(port, self)
+        self.m_shared_truth.register_component(port, self)
 
         self.m_force            = 0
         self.s_default_columns  = {

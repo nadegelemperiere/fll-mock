@@ -8,6 +8,9 @@
 # Latest revision: 04 november 2022
 # --------------------------------------------------- """
 
+# Local include
+from spike.context import Context
+
 class Mock() :
     """ Generic mock class """
 
@@ -16,6 +19,7 @@ class Mock() :
     m_current_step      = -1
     m_columns           = {}
     m_shared_context    = None
+    m_shared_truth      = None
 
     s_default_columns   = {}
 
@@ -28,6 +32,8 @@ class Mock() :
         """
         self.m_scenario         = {}
         self.m_current_step     = -1
+        self.m_shared_context   = Context()
+        self.m_shared_truth     = None
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
@@ -42,15 +48,13 @@ class Mock() :
         self.m_columns = columns
 
 # pylint: disable=R0801
-    def initialize(self, data) :
-        """ Initialize simulation from scenario data
-        ---
-        data (dict)     : Simulation data
-        """
+    def initialize(self) :
+        """ Initialize simulation from context """
         if len(self.m_columns) == 0 :
             self.m_columns = self.s_default_columns
 
         self.m_scenario = {}
+        data = self.m_shared_context.get_data()
         for column in self.m_columns :
             if self.m_columns[column] not in data :
                 col = self.m_columns[column]

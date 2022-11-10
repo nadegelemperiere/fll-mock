@@ -14,23 +14,23 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/force-sensor-scenarii.xlsx
 
 *** Test Cases ***
 
 4.1 Ensure Force Sensor Is Created With The Required Constants
     [Tags]    ForceSensor
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
-    ${sensor}       Create Object    ForceSensor
-    @{members} =    Create List    wait_until_pressed    wait_until_released    is_pressed    get_force_newton    get_force_percentage
+    Create Scenario  ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
+    ${sensor}        Create Object    ForceSensor
+    @{members} =     Create List    wait_until_pressed    wait_until_released    is_pressed    get_force_newton    get_force_percentage
     Should Have Members    ${sensor}    ${members}
 
 4.2 Test Force Sensor Behavior On Simple Scenario
     [Tags]    ForceSensor
-    ${scenario}             Create Scenario      ${JSON_CONF_FILE}
-    ${sensor}               Create Object        ForceSensor
-    ${scenario}             Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    Create Scenario         ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${sensor}               Create Object      ForceSensor
+    Use Object Method       ${sensor}          initialize
     @{steps} =              Create List    20    9      11    10    20
     @{is_pressed} =         Create List
     @{force} =              Create List    0     1.2    7     9.2    0
@@ -56,10 +56,10 @@ ${EXCEL_DATA_FILE}                ${data}/force-sensor-scenarii.xlsx
     Should Not Be True  ${is_pressed[4]}
 
 4.3 Test The Parallel Behaviour Of Wait functions
-    [Tags]              ForceSensor
-    ${scenario}         Create Scenario      ${JSON_CONF_FILE}
-    ${sensor}           Create Object        ForceSensor
-    ${scenario}         Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${sensor}
+    [Tags]    ForceSensor
+    Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${sensor}           Create Object      ForceSensor
+    Use Object Method   ${sensor}          initialize
     ${thread}           Start Method In A Thread    ${sensor}    wait_until_pressed
     ${is_alive}         Is Thread Running    ${thread}
     Should Be True      ${is_alive}

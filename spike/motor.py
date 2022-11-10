@@ -10,7 +10,7 @@
 
 # Local includes
 from spike.mock import Mock
-from spike.context import Context
+from spike.truth import Truth
 
 # Constants
 motor_directions = [
@@ -54,11 +54,13 @@ class Motor(Mock) :
 
         super().__init__()
 
-        self.m_shared_context = Context()
-        check_for_component = self.m_shared_context.m_robot.check_component(port, 'Motor')
+
+        self.m_shared_truth   = Truth()
+        check_for_component = self.m_shared_truth.check_component(port, 'Motor')
         if  not check_for_component :
             raise ValueError('Port ' + port + ' does not host a motor')
-        self.m_shared_context.m_robot.register_component(port, self)
+        self.m_shared_truth.register_component(port, self)
+
 
         self.m_default_speed            = 100
         self.m_stop_action              = 'brake'

@@ -14,23 +14,23 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/light-matrix-scenarii.xlsx
 
 *** Test Cases ***
 
 6.1 Ensure Light Matrix Is Created With The Required Constants
     [Tags]  LightMatrix
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
+    Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${matrix}       Create Object    LightMatrix
     @{members} =    Create List      show_image    set_pixel    write     off
     Should Have Members    ${matrix}    ${members}
 
 6.2 Test Light Matrix Image Display
     [Tags]    LightMatrix
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
-    ${matrix}       Create Object    LightMatrix
-    ${scenario}     Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${matrix}
+    Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${matrix}          Create Object      LightMatrix
+    Use Object Method  ${matrix}          initialize
     Play Scenario During Steps  ${matrix}     1
     Use Object Method  ${matrix}  show_image    False    -1    HEART
     ${heart}       Use Object Method  ${matrix}   get_matrix    True

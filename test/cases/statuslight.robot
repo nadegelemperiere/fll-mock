@@ -14,30 +14,30 @@ Library         ../keywords/objects.py
 Library         Collections
 
 *** Variables ***
-${JSON_CONF_FILE}                 ${data}/configuration.json
+${JSON_CONF_FILE}                 ${data}/truth.json
 ${EXCEL_DATA_FILE}                ${data}/status-light-scenarii.xlsx
 
 *** Test Cases ***
 
 11.1 Ensure Status Light Is Created With The Required Constants
     [Tags]    StatusLight
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
-    ${light}        Create Object    StatusLight
-    @{members} =    Create List    on    off
+    Create Scenario  ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${light}         Create Object      StatusLight
+    @{members} =     Create List        on    off
     Should Have Members    ${light}    ${members}
 
 11.2 Ensure Error Management Is Correctly Implemented
     [Tags]    StatusLight
-    ${scenario}     Create Scenario  ${JSON_CONF_FILE}
-    ${light}        Create Object    StatusLight
+    Create Scenario  ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${light}         Create Object      StatusLight
     Run Keyword And Expect Error    TypeError: color is not a string                    Use Object Method  ${light}     on    False    -1    100.0
     Run Keyword And Expect Error    ValueError: color is not one of the allowed values  Use Object Method  ${light}     on    False    -1    whatever
 
 11.3 Test Status Light Behavior
     [Tags]    StatusLight
-    ${scenario}        Create Scenario  ${JSON_CONF_FILE}
-    ${light}          Create Object    StatusLight
-    ${scenario}        Initialize Scenario  ${scenario}    ${EXCEL_DATA_FILE}    simple    ${light}
+    Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
+    ${light}           Create Object      StatusLight
+    Use Object Method  ${light}           initialize
     Play Scenario During Steps  ${light}     1
     Use Object Method  ${light}    on    False    -1    red
     ${color}           Use Object Method  ${light}    get_color    True

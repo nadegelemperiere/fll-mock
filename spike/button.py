@@ -69,25 +69,6 @@ class Button(Mock) :
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def initialize(self, data) :
-        """ Initialize simulation from scenario data
-        ---
-        data (dict) : Simulation data
-        """
-        if len(self.m_columns) == 0 :
-            self.m_columns = self.s_default_columns
-
-        self.m_scenario = {}
-        for column in self.m_columns :
-            if self.m_columns[column] not in data :
-                message = 'Button "' + self.m_columns[column] + '" data not found in excel sheet'
-                raise Exception(message)
-            self.m_scenario[column] = []
-        for status in data[self.m_columns['is_pressed']]:
-            if status == 0      : self.m_scenario['is_pressed'].append(False)
-            elif status == 1    : self.m_scenario['is_pressed'].append(True)
-        self.m_current_step = 0
-
     def step(self) :
         """ Step to the next simulation step """
 
