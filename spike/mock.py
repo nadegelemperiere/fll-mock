@@ -81,6 +81,7 @@ class Mock() :
         ---
         returns  (dict)   : A dict of list of command values
         """
+        return self.m_commands
 
 
 # pylint: enable=R0902
