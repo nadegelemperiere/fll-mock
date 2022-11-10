@@ -32,6 +32,9 @@ jobs:
             - name: Installing dependencies
               run: pip install -r requirements-test.txt --target site-packages
 
+            - name: Installing dependencies
+              run: pip install -r requirements.txt --target site-packages
+
             - name: Linting module
               continue-on-error: true
               run: pylint spike
@@ -39,6 +42,10 @@ jobs:
             - name: Run pip-audit to check for vulnerabilities
               continue-on-error: true
               run: pip-audit -r requirements-test.txt --format json
+
+            - name: Run pip-audit to check for vulnerabilities
+              continue-on-error: true
+              run: pip-audit -r requirements.txt --format json
 
     test:
         name: Testing Package
