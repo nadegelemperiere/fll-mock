@@ -14,7 +14,9 @@ from openpyxl import load_workbook
 class Context() :
     """ Singleton class managing a simulation context """
 
-    m_data          = {}
+    m_data              = {}
+    m_commands          = {}
+    m_current_step      = -1
 
     def __new__(cls):
 
@@ -57,9 +59,51 @@ class Context() :
                 if isinstance(value,str) and value == 'False' : value = False
                 self.m_data[header].append(value)
 
-    def get_data(self) :
-        """ Return scenario data
+        self.restart()
+
+    def step(self) :
+        """ Take one step in simulation """
+        self.m_current_step += 1
+        self.m_commands['time'].append(self.get_data('time'))
+
+    def restart(self) :
+        """ Restart simulation """
+        self.m_current_step = -1
+        self.m_commands = {}
+        self.m_commands['time']     = []
+        self.m_commands['commands'] = []
+
+    def log_command(self, command, args) :
+        """ Push another command in
         ---
-        returns (dict)  : Scenario data
+        command (str)   : Command to log
+        args (dict)     : args to log
         """
-        return self.m_data
+
+        for _ in range(len(self.m_commands['time']) - len(self.m_commands['commands']) - 1) :
+            self.m_commands['commands'].append(None)
+        self.m_commands['commands'].append(command)
+
+        for name, value in args.items() :
+            if not name in self.m_commands :
+                self.m_commands[name] = []
+            for _ in range(len(self.m_commands['time']) - len(self.m_commands[name]) - 1) :
+                self.m_commands[name].append(value)
+
+    def get_data(self, column) :
+        """ Get current data for current column
+        ---
+        column (str)  : Column to get data from
+        ---
+        returns       : Column data in its associated type
+        """
+        if column not in self.m_data :
+            raise ValueError('Column ' + column + ' not found in data')
+        return self.m_data[column][self.m_current_step]
+
+    def get_commands(self) :
+        """ Get logged commands
+        ---
+        returns (dict)      : All logged commands
+        """
+        return self.m_commands

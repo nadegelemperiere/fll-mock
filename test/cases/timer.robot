@@ -30,7 +30,6 @@ ${EXCEL_DATA_FILE}                ${data}/timer-scenarii.xlsx
     [Tags]  Timer
     Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${s_timer}         Create Object      TimerSingleton
-    Use Object Method  ${s_timer}         initialize
     Play Scenario During Steps  ${s_timer}     10
     ${timer1}           Create Object    Timer
     Use Object Method  ${timer1}    reset    False
@@ -47,7 +46,6 @@ ${EXCEL_DATA_FILE}                ${data}/timer-scenarii.xlsx
     [Tags]  Timer
     Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${s_timer}          Create Object      TimerSingleton
-    Use Object Method   ${s_timer}         initialize
     Play Scenario During Steps  ${s_timer}     1
     ${thread}           Start Function In A Thread    wait_for_seconds    2
     ${is_alive}         Is Thread Running    ${thread}

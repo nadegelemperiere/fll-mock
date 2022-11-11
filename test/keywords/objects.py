@@ -78,8 +78,11 @@ def should_have_members(object, members) :
 @keyword('Play Scenario During Steps')
 def play_scenario_during_steps(object, step) :
 
+    scenario = Context()
+    truth    = Truth()
     for i_step in range(int(step)) :
-        object.step()
+        scenario.step()
+        object.update()
 
 @keyword('Use Object Method')
 def use_object_method(object, method, shall_return=False, none_value=-1, *parameters):

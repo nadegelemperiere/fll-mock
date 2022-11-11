@@ -36,21 +36,22 @@ class TimerSingleton(Mock) :
 
     def __init__(self) :
         """ Contructor """
-        if len(self.m_scenario) == 0 :
+        if self.m_shared_context is None :
             super().__init__()
             self.m_time             = 0
 
         self.s_default_columns  = {
             'time' : 'time',
         }
+        self.columns()
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.m_time         = self.m_scenario['time'][self.m_current_step]
-        super().step()
+        self.m_time         = self.m_shared_context.get_data(self.m_columns['time'])
+        super().update()
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

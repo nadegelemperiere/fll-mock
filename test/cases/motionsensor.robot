@@ -36,7 +36,6 @@ ${EXCEL_DATA_FILE}                ${data}/motion-sensor-scenarii.xlsx
     [Tags]      MotionSensor
     ${scenario}         Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      MotionSensor
-    Use Object Method   ${sensor}          initialize
     @{steps} =          Create List    10        11      6          9       9         9        8       10      27      5
     @{yaw} =            Create List    0         30      90         180     -90       0        0       0       0       0
     @{pitch} =          Create List    0         0       0          0       0         0        50      -50     0       0
@@ -69,7 +68,6 @@ ${EXCEL_DATA_FILE}                ${data}/motion-sensor-scenarii.xlsx
     [Tags]  MotionSensor
     ${scenario}         Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      MotionSensor
-    Use Object Method   ${sensor}          initialize
     Play Scenario During Steps     ${sensor}  0
     ${y}        Use Object Method  ${sensor}  get_yaw_angle  True
     Should Be Equal As Integers    ${y}       0
@@ -90,7 +88,6 @@ ${EXCEL_DATA_FILE}                ${data}/motion-sensor-scenarii.xlsx
     [Tags]  MotionSensor
     ${scenario}         Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      MotionSensor
-    Use Object Method   ${sensor}          initialize
     @{steps} =          Create List    10    10      5     45       5
     @{values} =         Create List    none  tapped  none  falling  falling
     @{results} =        Create List    True  True    True  True     False
@@ -109,7 +106,6 @@ ${EXCEL_DATA_FILE}                ${data}/motion-sensor-scenarii.xlsx
     [Tags]  MotionSensor
     ${scenario}         Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      MotionSensor
-    Use Object Method   ${sensor}          initialize
     Play Scenario During Steps  ${sensor}      10
     ${thread}           Start Method In A Thread    ${sensor}    wait_for_new_gesture
     ${is_alive}         Is Thread Running      ${thread}

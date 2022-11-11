@@ -43,6 +43,7 @@ class Truth(Mock) :
             'y':'y',
             'z':'z',
         }
+        self.columns()
 
     def load_configuration(self, configuration) :
         """ Loading robot static configuration
@@ -122,30 +123,31 @@ class Truth(Mock) :
             result = self.m_components[port]
         return result
 
-# pylint: disable=W0612
-
-    def initialize(self) :
-        """ Initialize simulation from context """
-
-        if self.m_behaviour['load_only'] :
-            for port,component in self.m_components.items() :
-                component.initialize()
-        else :
-            super().initialize()
-
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
         if self.m_behaviour['load_only'] :
-            for port, component in self.m_components.items() :
-                component.step()
+            for _, component in self.m_components.items() :
+                component.update()
         else :
-            self.m_x_position = int(self.m_scenario['x'][self.m_current_step])
-            self.m_y_position = int(self.m_scenario['y'][self.m_current_step])
-            self.m_z_position = int(self.m_scenario['z'][self.m_current_step])
+            self.m_x_position = self.m_shared_context.get_data(self.m_columns['x'])
+            self.m_y_position = self.m_shared_context.get_data(self.m_columns['y'])
+            self.m_z_position = self.m_shared_context.get_data(self.m_columns['z'])
 
-        super().step()
-# pylint: enable=W0612
+        super().update()
+
+    def get_commands(self) :
+        """ Return commands received bby all objects
+        ---
+        returns (dict) : the commands received by components
+        """
+        result = {}
+        for port, component in self.m_components.items() :
+            result[port] = component.get_commands()
+
+        return result
+
+
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

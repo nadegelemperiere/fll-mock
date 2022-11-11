@@ -29,12 +29,11 @@ ${EXCEL_DATA_FILE}                ${data}/button-scenarii.xlsx
     [Tags]    Button
     Create Scenario     ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
     ${button}           Create Object          Button
-    Use Object Method  ${button}    initialize
     @{steps} =          Create List    36    20    2    46
     @{is_pressed} =     Create List
     @{was_pressed} =    Create List
     FOR    ${step}    IN    @{steps}
-        Play Scenario During Steps  ${button}     ${step}
+        Play Scenario During Steps  ${button}    ${step}
         ${is_p}         Use Object Method  ${button}    is_pressed    True
         ${was_p}        Use Object Method  ${button}    was_pressed    True
         Append To List  ${is_pressed}    ${is_p}
@@ -53,16 +52,15 @@ ${EXCEL_DATA_FILE}                ${data}/button-scenarii.xlsx
     [Tags]              Button
     Create Scenario     ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
     ${button}           Create Object        Button
-    Use Object Method  ${button}             initialize
     ${thread}           Start Method In A Thread    ${button}    wait_until_pressed
     ${is_alive}         Is Thread Running    ${thread}
     Should Be True      ${is_alive}
-    Play Scenario During Steps  ${button}    36
+    Play Scenario During Steps    ${button}    36
     ${is_alive}         Is Thread Running    ${thread}
     Should Not Be True  ${is_alive}
     ${thread}           Start Method In A Thread    ${button}    wait_until_released
     ${is_alive}         Is Thread Running    ${thread}
     Should Be True      ${is_alive}
-    Play Scenario During Steps  ${button}    20
+    Play Scenario During Steps    ${button}    20
     ${is_alive}         Is Thread Running    ${thread}
     Should Not Be True  ${is_alive}

@@ -45,6 +45,7 @@ class ForceSensor(Mock) :
         self.s_default_columns  = {
             'force':'force',
         }
+        self.columns()
 
 # pylint: enable=W0102
 
@@ -77,12 +78,12 @@ class ForceSensor(Mock) :
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.m_force   = self.m_scenario['force'][self.m_current_step]
+        self.m_force = self.m_shared_context.get_data(self.m_columns['force'])
 
-        super().step()
+        super().update()
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

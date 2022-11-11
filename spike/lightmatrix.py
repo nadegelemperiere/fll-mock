@@ -130,11 +130,7 @@ class LightMatrix(Mock) :
         self.s_default_columns  = {
             'time' : 'time',
         }
-        self.m_commands['time']     = []
-        self.m_commands['command']  = []
-        self.m_commands['image']    = []
-        self.m_commands['pixels']   = []
-        self.m_commands['text']     = []
+        self.columns()
 
         for i_line in range(0,5) :
             for i_column in range(0,5) :
@@ -157,8 +153,9 @@ class LightMatrix(Mock) :
         if image not in self.s_lightmatrix_images :
             raise ValueError('Unknown image ' + image + ' in light matrix')
 
-        self.m_commands['command'][-1]  = 'show_image'
-        self.m_commands['image'][-1]    = image
+        self.m_shared_context.log_command('show_image',{
+            'image' : image,
+        })
 
         self.m_matrix = self.s_lightmatrix_images[image]
         for i_pixel in range(0,25) :
@@ -188,8 +185,10 @@ class LightMatrix(Mock) :
         if y < 0 or y > 4 :
             raise ValueError('y value is not in [0,4]')
 
-        self.m_commands['command'][-1]  = 'set_pixel'
-        self.m_commands['pixels'][-1]   = {'x' : x, 'y' : y}
+        self.m_shared_context.log_command('set_pixel',{
+            'x' : x,
+            'y' : y,
+        })
 
         self.m_matrix[x + 5 * y] = brightness
         self.__stdout()
@@ -201,8 +200,9 @@ class LightMatrix(Mock) :
         text  (str)         : The text to display
         """
 
-        self.m_commands['command'][-1]  = 'write'
-        self.m_commands['text'][-1]     = text
+        self.m_shared_context.log_command('write',{
+            'text' : text,
+        })
 
         for letter in text :
             self.m_matrix = self.s_lightmatrix_images[str(letter).upper()]
@@ -213,7 +213,8 @@ class LightMatrix(Mock) :
     def off(self) :
         """ Shut down all the pixel of the light matrix """
 
-        self.m_commands['command'][-1]  = 'off'
+
+        self.m_shared_context.log_command('off',{})
 
         for i_line in range(0,5) :
             for i_column in range(0,5) :
@@ -223,16 +224,10 @@ class LightMatrix(Mock) :
 # ----------------- SIMULATION FUNCTIONS -----------------
 
 # pylint: disable=W0246
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
-        self.m_commands['command'].append(None)
-        self.m_commands['image'].append(None)
-        self.m_commands['pixels'].append(None)
-        self.m_commands['text'].append(None)
-
-        super().step()
+        super().update()
 # pylint: enable=W0246
 
     def get_matrix(self) :

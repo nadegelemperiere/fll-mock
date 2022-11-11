@@ -101,22 +101,12 @@ class PrimeHub(Mock) :
             'gesture'    : self.m_columns['gesture'],
         })
 
-    def initialize(self) :
-        """ Initialize simulation from context """
-
-        self.left_button.initialize()
-        self.right_button.initialize()
-        self.speaker.initialize()
-        self.status_light.initialize()
-        self.light_matrix.initialize()
-        self.motion_sensor.initialize()
-
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.left_button.step()
-        self.right_button.step()
-        self.speaker.step()
-        self.light_matrix.step()
-        self.status_light.step()
-        self.motion_sensor.step()
+        self.left_button.update()
+        self.right_button.update()
+        self.speaker.update()
+        self.light_matrix.update()
+        self.status_light.update()
+        self.motion_sensor.update()

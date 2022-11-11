@@ -51,11 +51,9 @@ class MotionSensor(Mock) :
             'yaw':'yaw',
             'pitch':'pitch',
             'roll':'roll',
-            'gesture':'gesture',
-            'time' : 'time',
+            'gesture':'gesture'
         }
-        self.m_commands['time'] = []
-        self.m_commands['command'] = []
+        self.columns()
 
         self.m_zero_yaw_angle    = 0
         self.m_last_gesture      = ''
@@ -151,14 +149,14 @@ class MotionSensor(Mock) :
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.m_yaw          = int(self.m_scenario['yaw'][self.m_current_step])
-        self.m_roll         = int(self.m_scenario['roll'][self.m_current_step])
-        self.m_pitch        = int(self.m_scenario['pitch'][self.m_current_step])
+        self.m_yaw          = int(self.m_shared_context.get_data(self.m_columns['yaw']))
+        self.m_roll         = int(self.m_shared_context.get_data(self.m_columns['roll']))
+        self.m_pitch        = int(self.m_shared_context.get_data(self.m_columns['pitch']))
 
-        gesture = self.m_scenario['gesture'][self.m_current_step]
+        gesture = self.m_shared_context.get_data(self.m_columns['gesture'])
         if gesture in motionsensor_gestures :
             self.m_gesture = gesture
             self.m_last_gesture  = gesture
@@ -169,10 +167,7 @@ class MotionSensor(Mock) :
         else :
             raise ValueError('Invalid gesture : ' + gesture)
 
-        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
-        self.m_commands['command'].append(None)
-
-        super().step()
+        super().update()
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

@@ -44,11 +44,7 @@ class Speaker(Mock) :
         self.s_default_columns = {
             'time' : 'time',
         }
-        self.m_commands['time']     = []
-        self.m_commands['command']  = []
-        self.m_commands['note']     = []
-        self.m_commands['seconds']  = []
-        self.m_commands['volume']   = []
+        self.columns()
 
 # pylint: enable=W0102
 
@@ -67,9 +63,10 @@ class Speaker(Mock) :
         if note < self.s_min_note or note > self.s_max_note :
             raise ValueError('note is not within the allowed range of 44-123')
 
-        self.m_commands['command'][-1]  = 'beep'
-        self.m_commands['note'][-1]     = note
-        self.m_commands['seconds'][-1]  = seconds
+        self.m_shared_context.log_command('beep',{
+            'note'    : note,
+            'seconds' : seconds,
+        })
 
         self.m_is_beeping = True
         self.m_note       = note
@@ -91,8 +88,9 @@ class Speaker(Mock) :
         if note < 44 or note > 123 :
             raise ValueError('note is not within the allowed range of 44-123')
 
-        self.m_commands['command'][-1]  = 'start_beep'
-        self.m_commands['note'][-1]     = note
+        self.m_shared_context.log_command('start_beep',{
+            'note'    : note,
+        })
 
         self.m_is_beeping = True
         self.m_note       = note
@@ -102,7 +100,7 @@ class Speaker(Mock) :
         self.m_is_beeping = False
         self.m_note       = 0
 
-        self.m_commands['command'][-1] = 'stop'
+        self.m_shared_context.log_command('stop',{})
 
     def get_volume(self) :
         """ Volume return function
@@ -123,23 +121,18 @@ class Speaker(Mock) :
         self.m_volume = volume
         self.m_volume = min(max(0,self.m_volume),self.s_max_volume)
 
-        self.m_commands['command'][-1] = 'set_volume'
-        self.m_commands['volume'][-1] = volume
+        self.m_shared_context.log_command('set_volume',{
+            'volume'    : volume,
+        })
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.m_time         = self.m_scenario['time'][self.m_current_step]
+        self.m_time         = self.m_shared_context.get_data(self.m_columns['time'])
 
-        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
-        self.m_commands['command'].append(None)
-        self.m_commands['note'].append(None)
-        self.m_commands['seconds'].append(None)
-        self.m_commands['volume'].append(None)
-
-        super().step()
+        super().update()
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

@@ -30,7 +30,6 @@ ${EXCEL_DATA_FILE}                ${data}/speaker-scenarii.xlsx
     [Tags]  Speaker
     Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${speaker}         Create Object      Speaker
-    Use Object Method  ${speaker}         initialize
     Play Scenario During Steps     ${speaker}    1
     Use Object Method  ${speaker}    set_volume    False    -1    50
     ${volume}            Use Object Method  ${speaker}    get_volume    True
@@ -40,7 +39,6 @@ ${EXCEL_DATA_FILE}                ${data}/speaker-scenarii.xlsx
     [Tags]  Speaker
     Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${speaker}          Create Object      Speaker
-    Use Object Method   ${speaker}         initialize
     Play Scenario During Steps  ${speaker}     1
     ${thread}           Start Method In A Thread    ${speaker}    beep    60    2
     ${is_alive}         Is Thread Running    ${thread}

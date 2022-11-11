@@ -40,7 +40,6 @@ ${EXCEL_DATA_FILE}                ${data}/distance-sensor-scenarii.xlsx
     [Tags]    DistanceSensor
     Create Scenario                ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}                      Create Object      DistanceSensor
-    Use Object Method              ${sensor}          initialize
     @{steps} =                     Create List    4      20     10     15     25
     @{distance_cm_lr} =            Create List    -1     70     40     160    -1
     @{distance_inches_lr} =        Create List    -1     28     16     63     -1
@@ -77,7 +76,6 @@ ${EXCEL_DATA_FILE}                ${data}/distance-sensor-scenarii.xlsx
     [Tags]  DistanceSensor
     Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      DistanceSensor
-    Use Object Method   ${sensor}          initialize
     Play Scenario During Steps  ${sensor}     10
     ${thread}           Start Method In A Thread    ${sensor}    wait_for_distance_closer_than    170    cm    False
     ${is_alive}         Is Thread Running    ${thread}

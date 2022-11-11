@@ -22,7 +22,7 @@ ${EXCEL_DATA_FILE}                ${data}/force-sensor-scenarii.xlsx
 4.1 Ensure Force Sensor Is Created With The Required Constants
     [Tags]    ForceSensor
     Create Scenario  ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
-    ${sensor}        Create Object    ForceSensor
+    ${sensor}        Create Object  ForceSensor
     @{members} =     Create List    wait_until_pressed    wait_until_released    is_pressed    get_force_newton    get_force_percentage
     Should Have Members    ${sensor}    ${members}
 
@@ -30,7 +30,6 @@ ${EXCEL_DATA_FILE}                ${data}/force-sensor-scenarii.xlsx
     [Tags]    ForceSensor
     Create Scenario         ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}               Create Object      ForceSensor
-    Use Object Method       ${sensor}          initialize
     @{steps} =              Create List    20    9      11    10    20
     @{is_pressed} =         Create List
     @{force} =              Create List    0     1.2    7     9.2    0
@@ -59,7 +58,6 @@ ${EXCEL_DATA_FILE}                ${data}/force-sensor-scenarii.xlsx
     [Tags]    ForceSensor
     Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      ForceSensor
-    Use Object Method   ${sensor}          initialize
     ${thread}           Start Method In A Thread    ${sensor}    wait_until_pressed
     ${is_alive}         Is Thread Running    ${thread}
     Should Be True      ${is_alive}

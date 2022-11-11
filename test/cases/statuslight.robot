@@ -37,7 +37,6 @@ ${EXCEL_DATA_FILE}                ${data}/status-light-scenarii.xlsx
     [Tags]    StatusLight
     Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${light}           Create Object      StatusLight
-    Use Object Method  ${light}           initialize
     Play Scenario During Steps  ${light}     1
     Use Object Method  ${light}    on    False    -1    red
     ${color}           Use Object Method  ${light}    get_color    True

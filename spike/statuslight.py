@@ -34,9 +34,7 @@ class StatusLight(Mock) :
         self.s_default_columns = {
             'time' : 'time',
         }
-        self.m_commands['time']     = []
-        self.m_commands['command']  = []
-        self.m_commands['color']    = []
+        self.columns()
 
 # pylint: enable=W0102
 
@@ -53,8 +51,9 @@ class StatusLight(Mock) :
         if color not in status_light_colors :
             raise ValueError('color is not one of the allowed values')
 
-        self.m_commands['command'][-1]  = 'on'
-        self.m_commands['color'][-1]    = color
+        self.m_shared_context.log_command('on',{
+            'color'    : color,
+        })
 
         self.m_color = color
         self.m_is_on = True
@@ -63,20 +62,18 @@ class StatusLight(Mock) :
     def off(self) :
         """ Turns off the light"""
 
-        self.m_commands['command'][-1] = 'off'
+        self.m_shared_context.log_command('off',{})
 
         self.m_is_on = False
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
+# pylint: disable=W0246
+    def update(self) :
         """ Step to the next simulation step """
 
-        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
-        self.m_commands['command'].append(None)
-        self.m_commands['color'].append(None)
-
-        super().step()
+        super().update()
+# pylint: enable=W0246
 
     def get_color(self) :
         """ Return color """

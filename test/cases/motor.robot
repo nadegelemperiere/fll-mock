@@ -56,7 +56,6 @@ ${EXCEL_DATA_FILE}                ${data}/motor-scenarii.xlsx
     [Tags]    Motor
     Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${motor}           Create Object      Motor
-    Use Object Method  ${motor}           initialize
     Play Scenario During Steps     ${motor}    50
     ${d}        Use Object Method  ${motor}    get_degrees_counted     True
     ${p}        Use Object Method  ${motor}    get_position            True

@@ -35,6 +35,7 @@ class Button(Mock) :
         self.s_default_columns  = {
             'is_pressed':'is_pressed',
         }
+        self.columns()
 # pylint: enable=W0102
 
     def wait_until_pressed(self) :
@@ -69,14 +70,14 @@ class Button(Mock) :
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
-        """ Step to the next simulation step """
+    def update(self) :
+        """ Update data from current context data """
 
-        self.m_is_pressed   = self.m_scenario['is_pressed'][self.m_current_step]
+        self.m_is_pressed      = self.m_shared_context.get_data(self.m_columns['is_pressed'])
         if not self.m_was_pressed :
-            self.m_was_pressed = self.m_scenario['is_pressed'][self.m_current_step]
+            self.m_was_pressed = self.m_is_pressed
 
-        super().step()
+        super().update()
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

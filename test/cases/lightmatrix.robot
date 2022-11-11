@@ -30,7 +30,6 @@ ${EXCEL_DATA_FILE}                ${data}/light-matrix-scenarii.xlsx
     [Tags]    LightMatrix
     Create Scenario    ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${matrix}          Create Object      LightMatrix
-    Use Object Method  ${matrix}          initialize
     Play Scenario During Steps  ${matrix}     1
     Use Object Method  ${matrix}  show_image    False    -1    HEART
     ${heart}       Use Object Method  ${matrix}   get_matrix    True

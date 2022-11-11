@@ -23,7 +23,7 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
     [Tags]    ColorSensor
     Create Scenario  ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
     ${sensor}        Create Object    ColorSensor
-    @{members} =     Create List    get_color    get_ambiant_light    get_reflected_light    get_rgb_intensity    get_red     get_green     get_blue     wait_until_color    wait_for_new_color     light_up     light_up_all
+    @{members} =     Create List      get_color    get_ambiant_light    get_reflected_light    get_rgb_intensity    get_red     get_green     get_blue     wait_until_color    wait_for_new_color     light_up     light_up_all
     Should Have Members    ${sensor}    ${members}
 
 2.2 Ensure Error Management Is Correctly Implemented
@@ -39,7 +39,6 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
     [Tags]  ColorSensor
     Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      ColorSensor
-    Use Object Method   ${sensor}          initialize
     @{steps} =          Create List    40      20       30      50       50
     @{red} =            Create List    1024    0        1024    0        0
     @{blue} =           Create List    1024    0        0       0        1024
@@ -77,7 +76,6 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
     [Tags]  ColorSensor
     Create Scenario     ${JSON_CONF_FILE}  ${EXCEL_DATA_FILE}    simple
     ${sensor}           Create Object      ColorSensor
-    Use Object Method   ${sensor}          initialize
     Play Scenario During Steps  ${sensor}     10
     ${thread}           Start Method In A Thread    ${sensor}    wait_until_color    red
     ${is_alive}         Is Thread Running    ${thread}
@@ -103,7 +101,6 @@ ${EXCEL_DATA_FILE}                ${data}/color-sensor-scenarii.xlsx
     [Tags]  ColorSensor
     Create Scenario    ${JSON_CONF_FILE}    ${EXCEL_DATA_FILE}    simple
     ${sensor}          Create Object      ColorSensor
-    Use Object Method  ${sensor}           initialize
     Play Scenario During Steps  ${sensor}     1
     ${c}                Use Object Method  ${sensor}    get_color  True
     Should Be Equal     white    ${c}

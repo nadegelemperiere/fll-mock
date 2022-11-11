@@ -74,11 +74,7 @@ class ColorSensor(Mock) :
             'ambiant':'ambiant',
             'time' : 'time',
         }
-        self.m_commands['time']     = []
-        self.m_commands['command']  = []
-        self.m_commands['light1']   = []
-        self.m_commands['light2']   = []
-        self.m_commands['light3']   = []
+        self.columns()
 
 
 # pylint: enable=W0102
@@ -181,10 +177,11 @@ class ColorSensor(Mock) :
         self.m_light2 = max(0,min(abs(brightness),100))
         self.m_light3 = max(0,min(abs(brightness),100))
 
-        self.m_commands['command'][-1] = 'light_up_all'
-        self.m_commands['light1'][-1] = self.m_light1
-        self.m_commands['light2'][-1] = self.m_light2
-        self.m_commands['light3'][-1] = self.m_light3
+        self.m_shared_context.log_command('light_up_all',{
+            'light1' : self.m_light1,
+            'light2' : self.m_light2,
+            'light3' : self.m_light3
+        })
 
     def light_up(self, light_1, light_2, light_3) :
         """ Light all color sensor LEDs
@@ -207,22 +204,24 @@ class ColorSensor(Mock) :
         self.m_light2 = max(0,min(abs(light_2),100))
         self.m_light3 = max(0,min(abs(light_3),100))
 
-        self.m_commands['command'][-1] = 'light_up'
-        self.m_commands['light1'][-1] = self.m_light1
-        self.m_commands['light2'][-1] = self.m_light2
-        self.m_commands['light3'][-1] = self.m_light3
+        self.m_shared_context.log_command('light_up',{
+            'light1' : self.m_light1,
+            'light2' : self.m_light2,
+            'light3' : self.m_light3
+        })
 
 # ----------------- SIMULATION FUNCTIONS -----------------
 
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        light_ratio = (self.m_light1 + self.m_light2 + self.m_light3) / 300
-        self.m_red          = int(self.m_scenario['red'][self.m_current_step] * light_ratio)
-        self.m_green        = int(self.m_scenario['green'][self.m_current_step] * light_ratio)
-        self.m_blue         = int(self.m_scenario['blue'][self.m_current_step] * light_ratio)
-        self.m_reflected    = int(self.m_scenario['reflected'][self.m_current_step] * light_ratio)
-        self.m_ambiant      = int(self.m_scenario['ambiant'][self.m_current_step])
+        light_ratio      = (self.m_light1 + self.m_light2 + self.m_light3) / 300
+        self.m_red       = int(self.m_shared_context.get_data(self.m_columns['red']) * light_ratio)
+        self.m_green     = int(self.m_shared_context.get_data(self.m_columns['green'])* light_ratio)
+        self.m_blue      = int(self.m_shared_context.get_data(self.m_columns['blue']) * light_ratio)
+        self.m_reflected = int(
+            self.m_shared_context.get_data(self.m_columns['reflected']) * light_ratio)
+        self.m_ambiant   = int(self.m_shared_context.get_data(self.m_columns['ambiant']))
 
         css3_name = rgb_to_name((
             int(self.m_red * 255 / 1024), \
@@ -231,13 +230,7 @@ class ColorSensor(Mock) :
         ))
         self.m_color = css3_to_spike_colormap[css3_name]
 
-        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
-        self.m_commands['command'].append(None)
-        self.m_commands['light1'].append(None)
-        self.m_commands['light2'].append(None)
-        self.m_commands['light3'].append(None)
-
-        super().step()
+        super().update()
 
     def check_columns(self, columns) :
         """ Check that all the required data have been provided for simulation

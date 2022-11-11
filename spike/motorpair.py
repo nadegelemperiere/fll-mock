@@ -66,31 +66,16 @@ class MotorPair(Mock) :
         self.m_default_speed = 100
         self.m_stop_action   = 'brake'
         self.s_default_columns  = {
-            'left degrees':'left degrees',
-            'right degrees':'right degrees',
-            'time' : 'time',
+            'left_degrees':'left_degrees',
+            'right_degrees':'right_degrees',
         }
-        self.m_commands['time']         = []
-        self.m_commands['command']      = []
-        self.m_commands['speed']        = []
-        self.m_commands['left_speed']   = []
-        self.m_commands['right_speed']  = []
-        self.m_commands['power']        = []
-        self.m_commands['left_power']   = []
-        self.m_commands['right_power']  = []
-        self.m_commands['amount']       = []
-        self.m_commands['unit']         = []
-        self.m_commands['steering']     = []
-        self.m_commands['rotations']    = []
-        self.m_commands['action']       = []
+        self.columns()
 
         self.m_left_motor.columns({
-            'time'    : 'time',
-            'degrees' : 'left degrees',
+            'degrees' : 'left_degrees',
         })
         self.m_right_motor.columns({
-            'time'    : 'time',
-            'degrees' : 'right degrees',
+            'degrees' : 'right_degrees',
         })
 
     def move(self, amount, unit='cm', steering=0, speed=None) :
@@ -119,13 +104,12 @@ class MotorPair(Mock) :
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
         steering = min(max(steering,- self.s_max_steering),self.s_max_steering)
 
-        self.m_commands['command'][-1]  = 'move'
-        self.m_commands['amount'][-1]   = amount
-        self.m_commands['unit'][-1]     = unit
-        self.m_commands['steering'][-1] = steering
-        self.m_commands['speed'][-1]    = speed
-
-        self.step()
+        self.m_shared_context.log_command('move',{
+            'amount'    : amount,
+            'unit'      : unit,
+            'steering'  : steering,
+            'speed'     : speed,
+        })
 
     def start(self, steering=0, speed=None) :
         """ Activate both motors
@@ -144,16 +128,18 @@ class MotorPair(Mock) :
         speed = min(max(speed,- self.s_max_speed),self.s_max_speed)
         steering = min(max(steering,- self.s_max_steering),self.s_max_steering)
 
-        self.m_commands['command'][-1]  = 'start'
-        self.m_commands['steering'][-1] = steering
-        self.m_commands['speed'][-1]    = speed
+        self.m_shared_context.log_command('start',{
+            'steering'  : steering,
+            'speed'     : speed,
+        })
 
-        self.step()
+        self.m_shared_context.step()
+        self.m_shared_truth.update()
 
     def stop(self) :
         """ Stop base """
 
-        self.m_commands['command'][-1]  = 'stop'
+        self.m_shared_context.log_command('stop',{})
 
     def move_tank(self, amount, unit='cm', left_speed=None, right_speed=None) :
         """ Activate both motors to move from a given distance
@@ -182,12 +168,11 @@ class MotorPair(Mock) :
         left_speed = min(max(left_speed,- self.s_max_speed),self.s_max_speed)
         right_speed = min(max(right_speed,- self.s_max_speed),self.s_max_speed)
 
-        self.m_commands['command'][-1]      = 'start'
-        self.m_commands['amount'][-1]       = amount
-        self.m_commands['left_speed'][-1]   = left_speed
-        self.m_commands['right_speed'][-1]  = right_speed
-
-        self.step()
+        self.m_shared_context.log_command('start',{
+            'amount'        : amount,
+            'left_speed'    : left_speed,
+            'right_speed'    : right_speed,
+        })
 
     def start_tank(self, left_speed, right_speed) :
         """ Activate both motors
@@ -204,11 +189,13 @@ class MotorPair(Mock) :
         left_speed = min(max(left_speed,- self.s_max_speed),self.s_max_speed)
         right_speed = min(max(right_speed,- self.s_max_speed),self.s_max_speed)
 
-        self.m_commands['command'][-1]      = 'start_tank'
-        self.m_commands['left_speed'][-1]   = left_speed
-        self.m_commands['right_speed'][-1]  = right_speed
+        self.m_shared_context.log_command('start_tank',{
+            'left_speed'    : left_speed,
+            'right_speed'    : right_speed,
+        })
 
-        self.step()
+        self.m_shared_context.step()
+        self.m_shared_truth.update()
 
     def start_at_power(self, power, steering=0) :
         """ Activate both motors
@@ -225,11 +212,13 @@ class MotorPair(Mock) :
         power = min(max(power,- self.s_max_power),self.s_max_power)
         steering = min(max(steering,- self.s_max_steering),self.s_max_steering)
 
-        self.m_commands['command'][-1]  = 'start_at_power'
-        self.m_commands['power'][-1]    = power
-        self.m_commands['steering'][-1] = steering
+        self.m_shared_context.log_command('start_at_power',{
+            'power'    : power,
+            'steering' : steering,
+        })
 
-        self.step()
+        self.m_shared_context.step()
+        self.m_shared_truth.update()
 
     def start_tank_at_power(self, left_power, right_power) :
         """ Activate both motors
@@ -246,11 +235,13 @@ class MotorPair(Mock) :
         left_power = min(max(left_power,- self.s_max_power),self.s_max_power)
         right_power = min(max(right_power,- self.s_max_power),self.s_max_power)
 
-        self.m_commands['command'][-1]      = 'start_tank_at_power'
-        self.m_commands['left_power'][-1]   = left_power
-        self.m_commands['right_power'][-1]  = right_power
+        self.m_shared_context.log_command('start_tank_at_power',{
+            'left_power'    : left_power,
+            'right_power' : right_power,
+        })
 
-        self.step()
+        self.m_shared_context.step()
+        self.m_shared_truth.update()
 
     def get_default_speed(self) :
         """ Return default speed
@@ -285,11 +276,11 @@ class MotorPair(Mock) :
         if not isinstance(speed, int) :
             raise TypeError('speed is not a number')
 
-        self.m_commands['command'][-1]  = 'set_default_speed'
-        self.m_commands['speed'][-1]    = speed
+        self.m_shared_context.log_command('set_default_speed',{
+            'speed'    : speed,
+        })
 
         self.m_default_speed = speed
-
 
     def set_stop_action(self, action) :
         """ Sets the action to be performed on stop
@@ -302,8 +293,9 @@ class MotorPair(Mock) :
         if action not in motor_stop_actions :
             raise ValueError('action is not one of the allowed values')
 
-        self.m_commands['command'][-1]  = 'set_stop_action'
-        self.m_commands['action'][-1]   = action
+        self.m_shared_context.log_command('set_stop_action',{
+            'action'    : action,
+        })
 
         self.m_stop_action = action
 
@@ -315,38 +307,22 @@ class MotorPair(Mock) :
         ---
         columns  (dict) : The excel simulation data column name
         """
+        if columns is None : columns = self.s_default_columns
+        self.m_columns = columns
+
         self.m_left_motor.columns({
-            'time'       : self.m_columns['time'],
-            'degrees'    : self.m_columns['left degrees'],
+            'degrees'    : self.m_columns['left_degrees'],
         })
         self.m_right_motor.columns({
-            'time'       : self.m_columns['time'],
-            'degrees'    : self.m_columns['right degrees'],
+            'degrees'    : self.m_columns['right_degrees'],
         })
 
-    def step(self) :
+    def update(self) :
         """ Step to the next simulation step """
 
-        left_degrees          = int(round(self.m_scenario['left degrees'][self.m_current_step]))
-        right_degrees         = int(round(self.m_scenario['right degrees'][self.m_current_step]))
+        self.m_left_motor.update()
+        self.m_right_motor.update()
 
-        self.m_left_motor.set_degrees(left_degrees)
-        self.m_right_motor.set_degrees(right_degrees)
-
-        self.m_commands['time'].append(self.m_scenario['time'][self.m_current_step])
-        self.m_commands['command'].append(None)
-        self.m_commands['speed'].append(None)
-        self.m_commands['left_speed'].append(None)
-        self.m_commands['right_speed'].append(None)
-        self.m_commands['power'].append(None)
-        self.m_commands['left_power'].append(None)
-        self.m_commands['right_power'].append(None)
-        self.m_commands['amount'].append(None)
-        self.m_commands['unit'].append(None)
-        self.m_commands['steering'].append(None)
-        self.m_commands['rotations'].append(None)
-        self.m_commands['action'].append(None)
-
-        super().step()
+        super().update()
 
 # pylint: enable=R0902
